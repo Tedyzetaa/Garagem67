@@ -147,6 +147,27 @@ body {
     cursor: pointer;
 }
 
+/* Logo Styles */
+.logo-image {
+    height: 60px; /* Altura ideal para o header */
+    width: auto;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+/* Ajuste responsivo para mobile */
+@media (max-width: 768px) {
+    .logo-image {
+        height: 50px; /* Um pouco menor em mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-image {
+        height: 45px; /* Ainda menor em telas muito pequenas */
+    }
+}
+
 /* Modal de Login */
 .login-modal {
     display: none;
