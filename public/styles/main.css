@@ -117,6 +117,67 @@ body {
     transform: translateY(-2px);
 }
 
+/* Botão Vire Entregador */
+.btn-delivery {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+    font-weight: bold;
+    text-decoration: none;
+    margin-right: 10px;
+    font-size: 0.9rem;
+}
+
+.btn-delivery:hover {
+    background: linear-gradient(135deg, #219653 0%, #27ae60 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.delivery-icon {
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+/* Ajuste responsivo para mobile */
+@media (max-width: 768px) {
+    .btn-delivery {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        margin-right: 8px;
+    }
+    
+    .delivery-icon {
+        margin-right: 6px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-area {
+        display: flex;
+        align-items: center;
+    }
+    
+    .btn-delivery {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        margin-right: 5px;
+    }
+    
+    .btn-delivery span.delivery-icon {
+        margin-right: 4px;
+    }
+}
+
 .google-icon {
     margin-right: 8px;
 }
