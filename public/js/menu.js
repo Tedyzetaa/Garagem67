@@ -6,49 +6,43 @@ class MenuManager {
                 {
                     id: "1",
                     name: "HEINEKEN LONG NECK",
-                    description: "Cerveja premium holandesa, sabor suave e refrescante",
+                    description: "Cerveja premium holandesa",
                     price: 12.00,
-                    image: "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&h=300&fit=crop",
                     category: "bebidas"
                 },
                 {
                     id: "2", 
                     name: "BUDWEISER LONG NECK",
-                    description: "Cerveja americana, conhecida como a Rainha das Cervejas",
+                    description: "Cerveja americana premium",
                     price: 10.00,
-                    image: "https://images.unsplash.com/photo-1566633808645-73aaff1b6d99?w=400&h=300&fit=crop",
                     category: "bebidas"
                 },
                 {
                     id: "3",
                     name: "CORONA EXTRA",
-                    description: "Cerveja mexicana leve e refrescante, ideal com limão",
+                    description: "Cerveja mexicana com limão",
                     price: 15.90,
-                    image: "https://images.unsplash.com/photo-1586993456357-62daa76d6d39?w=400&h=300&fit=crop", 
                     category: "bebidas"
                 },
                 {
                     id: "4",
                     name: "BECKS",
-                    description: "Cerveja alemã puro malte, sabor tradicional e encorpado",
+                    description: "Cerveja alemã puro malte",
                     price: 14.90,
-                    image: "https://images.unsplash.com/photo-1618885472187-470dc06697b7?w=400&h=300&fit=crop",
                     category: "bebidas"
                 },
                 {
                     id: "5",
                     name: "SPATEN",
-                    description: "Cerveja alemã clássica, sabor equilibrado e aromático",
+                    description: "Cerveja alemã clássica",
                     price: 13.90,
-                    image: "https://images.unsplash.com/photo-1571613316887-6f8d5c8117be?w=400&h=300&fit=crop",
                     category: "bebidas"
                 },
                 {
                     id: "6",
                     name: "STELLA ARTOIS",
-                    description: "Cerveja belga premium, sabor refinado e elegante",
+                    description: "Cerveja belga premium",
                     price: 14.90,
-                    image: "https://images.unsplash.com/photo-1600788879271-6c969b4b570d?w=400&h=300&fit=crop",
                     category: "bebidas"
                 }
             ],
@@ -56,33 +50,29 @@ class MenuManager {
                 {
                     id: "7",
                     name: "PORÇÃO DE BATATA FRITA",
-                    description: "Batata frita crocante temperada com ervas finas",
+                    description: "Batata frita crocante com ervas",
                     price: 25.00,
-                    image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop",
                     category: "comidas"
                 },
                 {
                     id: "8",
                     name: "PORÇÃO DE MANDIOCA",
-                    description: "Mandioca frita dourada com queijo coalho",
+                    description: "Mandioca frita com queijo coalho",
                     price: 28.00,
-                    image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop",
                     category: "comidas"
                 },
                 {
                     id: "9",
                     name: "PORÇÃO DE FRANGO A PASSARINHO",
-                    description: "Pedaços de frango empanados e fritos, crocantes por fora e suculentos por dentro",
+                    description: "Frango empanado crocante",
                     price: 35.00,
-                    image: "https://images.unsplash.com/photo-1626645735736-86fea8a58fd8?w=400&h=300&fit=crop",
                     category: "comidas"
                 },
                 {
                     id: "10",
                     name: "PORÇÃO DE CALABRESA ACEBOLADA",
-                    description: "Calabresa fatiada grelhada com cebolas em rodelas",
+                    description: "Calabresa grelhada com cebola",
                     price: 30.00,
-                    image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop",
                     category: "comidas"
                 }
             ],
@@ -90,55 +80,50 @@ class MenuManager {
                 {
                     id: "11",
                     name: "CAIPIRINHA DE VODKA",
-                    description: "Tradicional caipirinha com vodka, limão, açúcar e gelo",
+                    description: "Vodka, limão, açúcar e gelo",
                     price: 18.00,
-                    image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=300&fit=crop",
                     category: "drinks"
                 },
                 {
                     id: "12",
                     name: "MOJITO",
-                    description: "Rum, limão, hortelã, açúcar e água com gás",
+                    description: "Rum, hortelã, limão e açúcar",
                     price: 22.00,
-                    image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop",
                     category: "drinks"
                 },
                 {
                     id: "13",
                     name: "COSMOPOLITAN",
-                    description: "Vodka, licor de laranja, suco de cranberry e limão",
+                    description: "Vodka, licor de laranja e cranberry",
                     price: 25.00,
-                    image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop",
                     category: "drinks"
                 },
                 {
                     id: "14",
                     name: "NEGRONI",
-                    description: "Gin, vermute tinto e Campari, clássico italiano",
+                    description: "Gin, vermute e Campari",
                     price: 28.00,
-                    image: "https://images.unsplash.com/photo-1570593742245-4b2c2b591b6b?w=400&h=300&fit=crop",
                     category: "drinks"
                 },
                 {
                     id: "15",
                     name: "MARGARITA",
-                    description: "Tequila, licor de laranja e suco de limão, borda com sal",
+                    description: "Tequila, licor de laranja e limão",
                     price: 24.00,
-                    image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop",
                     category: "drinks"
                 },
                 {
                     id: "16",
                     name: "PIÑA COLADA",
-                    description: "Rum, leite de coco e suco de abacaxi, drink tropical",
+                    description: "Rum, leite de coco e abacaxi",
                     price: 26.00,
-                    image: "https://images.unsplash.com/photo-1578024989063-ba516d26f760?w=400&h=300&fit=crop",
                     category: "drinks"
                 }
             ]
         };
         
         this.currentCategory = 'bebidas';
+        this.itemQuantities = {}; // Controlar quantidades por item
         this.init();
     }
 
@@ -156,11 +141,6 @@ class MenuManager {
                 const category = tab.getAttribute('data-category');
                 this.switchCategory(category);
             });
-        });
-
-        // Evento personalizado para adicionar ao carrinho
-        document.addEventListener('addToCartFromMenu', (event) => {
-            this.addToCart(event.detail);
         });
     }
 
@@ -185,34 +165,93 @@ class MenuManager {
         const items = this.categories[category] || [];
         
         if (items.length === 0) {
-            container.innerHTML = '<div class="empty-menu-message">Nenhum item disponível nesta categoria</div>';
+            container.innerHTML = '<div class="empty-menu">Nenhum item disponível nesta categoria</div>';
             return;
         }
 
-        container.innerHTML = items.map(item => `
-            <div class="menu-item" data-id="${item.id}">
-                <div class="menu-item-image">
-                    <img src="${item.image}" alt="${item.name}" loading="lazy">
-                </div>
-                <div class="menu-item-content">
-                    <h3>${item.name}</h3>
-                    <p class="menu-item-description">${item.description}</p>
-                    <div class="menu-item-footer">
-                        <span class="menu-item-price">R$ ${item.price.toFixed(2)}</span>
-                        <button class="btn-add-to-cart" onclick="menuManager.addToCart(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-                            <span class="btn-icon">+</span>
-                            Adicionar
+        container.innerHTML = items.map(item => {
+            const quantity = this.getItemQuantity(item.id);
+            return `
+                <div class="menu-item" data-id="${item.id}">
+                    <div class="item-info">
+                        <h3 class="item-name">${item.name}</h3>
+                        <p class="item-description">${item.description}</p>
+                        <p class="item-price">R$ ${item.price.toFixed(2)}</p>
+                    </div>
+                    <div class="item-controls">
+                        <div class="quantity-controls">
+                            <button class="qty-btn minus" onclick="menuManager.decreaseQuantity('${item.id}')">-</button>
+                            <span class="quantity">${quantity}</span>
+                            <button class="qty-btn plus" onclick="menuManager.increaseQuantity('${item.id}')">+</button>
+                        </div>
+                        <button class="add-btn ${quantity > 0 ? 'active' : ''}" 
+                                onclick="menuManager.addToCart('${item.id}')"
+                                ${quantity === 0 ? 'disabled' : ''}>
+                            ${quantity > 0 ? `Adicionar (${quantity})` : 'Adicionar'}
                         </button>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         console.log(`📦 ${items.length} itens carregados na categoria ${category}`);
     }
 
-    addToCart(item) {
-        console.log('🛒 Adicionando ao carrinho do menu:', item);
+    getItemQuantity(itemId) {
+        return this.itemQuantities[itemId] || 0;
+    }
+
+    increaseQuantity(itemId) {
+        const currentQty = this.getItemQuantity(itemId);
+        if (currentQty < 10) {
+            this.itemQuantities[itemId] = currentQty + 1;
+            this.updateItemDisplay(itemId);
+        }
+    }
+
+    decreaseQuantity(itemId) {
+        const currentQty = this.getItemQuantity(itemId);
+        if (currentQty > 0) {
+            this.itemQuantities[itemId] = currentQty - 1;
+            this.updateItemDisplay(itemId);
+        }
+    }
+
+    updateItemDisplay(itemId) {
+        const itemElement = document.querySelector(`.menu-item[data-id="${itemId}"]`);
+        if (!itemElement) return;
+
+        const quantity = this.getItemQuantity(itemId);
+        const quantityDisplay = itemElement.querySelector('.quantity');
+        const addButton = itemElement.querySelector('.add-btn');
+
+        if (quantityDisplay) {
+            quantityDisplay.textContent = quantity;
+        }
+
+        if (addButton) {
+            if (quantity > 0) {
+                addButton.textContent = `Adicionar (${quantity})`;
+                addButton.classList.add('active');
+                addButton.disabled = false;
+            } else {
+                addButton.textContent = 'Adicionar';
+                addButton.classList.remove('active');
+                addButton.disabled = true;
+            }
+        }
+    }
+
+    addToCart(itemId) {
+        const item = this.findItemById(itemId);
+        const quantity = this.getItemQuantity(itemId);
+
+        if (!item || quantity === 0) {
+            console.log('❌ Nenhuma quantidade selecionada para:', item?.name);
+            return;
+        }
+
+        console.log('🛒 Adicionando ao carrinho:', item.name, 'x', quantity);
         
         // Disparar evento para o CartManager
         const addToCartEvent = new CustomEvent('addToCart', {
@@ -220,21 +259,33 @@ class MenuManager {
                 id: item.id,
                 name: item.name,
                 price: item.price,
-                quantity: 1
+                quantity: quantity
             }
         });
         document.dispatchEvent(addToCartEvent);
 
+        // Resetar quantidade após adicionar
+        this.itemQuantities[itemId] = 0;
+        this.updateItemDisplay(itemId);
+
         // Feedback visual
-        this.showAddToCartFeedback(item.name);
+        this.showAddToCartFeedback(item.name, quantity);
     }
 
-    showAddToCartFeedback(itemName) {
+    findItemById(itemId) {
+        for (const category of Object.values(this.categories)) {
+            const item = category.find(item => item.id === itemId);
+            if (item) return item;
+        }
+        return null;
+    }
+
+    showAddToCartFeedback(itemName, quantity) {
         // Criar elemento de feedback
         const feedback = document.createElement('div');
         feedback.className = 'add-to-cart-feedback';
         feedback.innerHTML = `
-            <span>✅ ${itemName} adicionado ao carrinho!</span>
+            <span>✅ ${quantity}x ${itemName} adicionado ao carrinho!</span>
         `;
         
         document.body.appendChild(feedback);
@@ -254,55 +305,127 @@ class MenuManager {
             }, 300);
         }, 2000);
     }
-
-    searchMenu(query) {
-        if (!query.trim()) {
-            this.loadMenu(this.currentCategory);
-            return;
-        }
-
-        const allItems = Object.values(this.categories).flat();
-        const filteredItems = allItems.filter(item => 
-            item.name.toLowerCase().includes(query.toLowerCase()) ||
-            item.description.toLowerCase().includes(query.toLowerCase())
-        );
-
-        const container = document.getElementById('menu-items-container');
-        if (!container) return;
-
-        if (filteredItems.length === 0) {
-            container.innerHTML = `
-                <div class="empty-search-message">
-                    <p>Nenhum item encontrado para "${query}"</p>
-                    <p>Tente outros termos ou volte ao menu principal</p>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = filteredItems.map(item => `
-            <div class="menu-item" data-id="${item.id}">
-                <div class="menu-item-image">
-                    <img src="${item.image}" alt="${item.name}" loading="lazy">
-                </div>
-                <div class="menu-item-content">
-                    <h3>${item.name}</h3>
-                    <p class="menu-item-description">${item.description}</p>
-                    <div class="menu-item-footer">
-                        <span class="menu-item-price">R$ ${item.price.toFixed(2)}</span>
-                        <button class="btn-add-to-cart" onclick="menuManager.addToCart(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-                            <span class="btn-icon">+</span>
-                            Adicionar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
 }
 
-// CSS para feedback visual
+// CSS para o menu
 const menuStyles = `
+.menu-item {
+    background: #2a2a2a;
+    border: 1px solid #d4af37;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+    border-color: #f1c40f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    color: #d4af37;
+    font-size: 1.2em;
+    margin: 0 0 8px 0;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.item-description {
+    color: #cccccc;
+    margin: 0 0 8px 0;
+    font-size: 0.9em;
+}
+
+.item-price {
+    color: #ffffff;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.item-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.qty-btn {
+    background: #d4af37;
+    color: #1a1a1a;
+    border: none;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.qty-btn:hover {
+    background: #f1c40f;
+    transform: scale(1.1);
+}
+
+.qty-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.quantity {
+    color: #ffffff;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+.add-btn {
+    background: #333;
+    color: #888;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.add-btn.active {
+    background: #d4af37;
+    color: #1a1a1a;
+    border-color: #d4af37;
+    cursor: pointer;
+}
+
+.add-btn.active:hover {
+    background: #f1c40f;
+    transform: scale(1.05);
+}
+
+.empty-menu {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 40px 20px;
+    font-size: 1.1em;
+}
+
 .add-to-cart-feedback {
     position: fixed;
     top: 100px;
@@ -316,24 +439,10 @@ const menuStyles = `
     transform: translateX(400px);
     transition: transform 0.3s ease;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    font-size: 14px;
 }
 
 .add-to-cart-feedback.show {
     transform: translateX(0);
-}
-
-.empty-menu-message,
-.empty-search-message {
-    text-align: center;
-    padding: 40px 20px;
-    color: #888;
-    font-style: italic;
-}
-
-.empty-search-message p:first-child {
-    font-weight: bold;
-    margin-bottom: 8px;
 }
 `;
 
