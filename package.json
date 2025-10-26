@@ -1,0 +1,8 @@
+{
+  "name": "garagem67",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'Frontend estático - use servidor local para desenvolvimento'"
+  }
+}

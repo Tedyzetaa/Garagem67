@@ -1,29 +1,15 @@
 {
   "version": 2,
-  "name": "garagem67",
   "builds": [
     {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "**/*.html",
+      "src": "public/**/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/backend/server.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/public/$1"
     }
-  ],
-  "env": {
-    "GOOGLE_CLIENT_ID": "@google_client_id",
-    "GOOGLE_CLIENT_SECRET": "@google_client_secret",
-    "JWT_SECRET": "@jwt_secret"
-  }
+  ]
 }
