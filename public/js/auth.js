@@ -120,58 +120,43 @@ class AuthService {
         if (emailForm) emailForm.style.display = 'block';
     }
 
-    async signInWithGoogle() {
-        try {
-            console.log('Iniciando login com Google...');
-            
-            // Feedback visual no botão
-            const googleBtn = document.getElementById('btn-google-login');
-            const originalText = googleBtn.innerHTML;
-            googleBtn.innerHTML = '<span class="option-icon">⏳</span><span class="option-text">Conectando...</span>';
-            googleBtn.disabled = true;
-
-            const provider = new firebase.auth.GoogleAuthProvider();
-            
-            provider.setCustomParameters({
-                prompt: 'select_account'
-            });
-            
-            provider.addScope('email');
-            provider.addScope('profile');
-            
-            const result = await firebase.auth().signInWithPopup(provider);
-            
-            console.log('✅ Login com Google realizado:', result.user.email);
-            
-            // ✅ NOTIFICA O ORDER SERVICE SOBRE O LOGIN
-            if (window.orderService) {
-                window.orderService.onUserLogin(result.user);
-            }
-            
-            this.closeLoginModal();
-            
-        } catch (error) {
-            console.error('❌ Erro no login com Google:', error);
-            // ✅ NOTIFICA O ORDER SERVICE SOBRE O LOGIN
-            if (window.orderService) {
-                window.orderService.onUserLogin(result.user);
-            }
-            
-            // Restaurar botão
-            const googleBtn = document.getElementById('btn-google-login');
-            googleBtn.innerHTML = '<span class="option-icon">🚗</span><span class="option-text">Continuar com Google</span>';
-            googleBtn.disabled = false;
-            
-            if (error.code === 'auth/popup-blocked') {
-                alert('Popup bloqueado! Por favor, permita popups para este site.');
-            } else if (error.code === 'auth/popup-closed-by-user') {
-                console.log('Usuário fechou o popup');
-            } else {
-                alert('Erro ao fazer login com Google. Tente novamente.');
-            }
+    // CORRIJA esta função no auth.js - linha ~157
+    async function signInWithGoogle() {
+    try {
+        console.log('Iniciando login com Google...');
+        
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        
+        // Adicionar parâmetros personalizados
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+        
+        // Abrir popup de autenticação
+        const result = await firebase.auth().signInWithPopup(provider);
+        
+        // ✅ CORREÇÃO: Use a variável 'result' que foi definida
+        const user = result.user;
+        console.log('✅ Login com Google bem-sucedido:', user);
+        
+        // Continuar com o fluxo normal...
+        await handleGoogleLoginSuccess(user);
+        
+    } catch (error) {
+        console.error('❌ Erro no login com Google:', error);
+        
+        // ✅ CORREÇÃO: Não tente usar 'result' aqui
+        if (error.code === 'auth/popup-closed-by-user') {
+            console.log('ℹ️ Usuário fechou a popup de login');
+            return;
         }
+        
+        // Mostrar erro para o usuário
+        showLoginError('Erro ao fazer login com Google: ' + error.message);
     }
-
+}
     async signInWithEmail() {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;

@@ -13,36 +13,31 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
     <script>
-        // Configuração direta do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBbgzZ21aPFHmeoeahk40eMllzEfCcI7BQ",
-            authDomain: "garagem67-c38cf.firebaseapp.com",
-            projectId: "garagem67-c38cf",
-            storageBucket: "garagem67-c38cf.appspot.com",
-            messagingSenderId: "579533283807",
-            appId: "1:579533283807:web:your_app_id_here",
-            measurementId: "G-YOUR_MEASUREMENT_ID"
-        };
+    // CONFIGURAÇÃO COMPLETA DO FIREBASE
+    const firebaseConfig = {
+        apiKey: "AIzaSyBbgzZ21aPFHmeoeahk40eMllzEfCcI7BQ",
+        authDomain: "garagem67-c38cf.firebaseapp.com",
+        projectId: "garagem67-c38cf",
+        storageBucket: "garagem67-c38cf.appspot.com",
+        messagingSenderId: "579533283807",
+        appId: "1:579533283807:web:c8299a4f8ea67b29c07c39d", // ATUALIZE ESTE
+        measurementId: "G-XXXXXXXXXX" // ADICIONE SE TIVER
+    };
 
-        // Inicializar Firebase quando a página carregar
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
+    // Inicializar Firebase
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            // ✅ VERIFICAR se o Firebase já foi inicializado
+            if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
-                console.log('✅ Firebase inicializado com sucesso');
-                
-                firebase.auth().onAuthStateChanged((user) => {
-                    if (user) {
-                        console.log('👤 Usuário já logado:', user.email);
-                    } else {
-                        console.log('🔒 Nenhum usuário logado');
-                    }
-                });
-                
-            } catch (error) {
-                console.error('❌ Erro ao inicializar Firebase:', error);
             }
-        });
-    </script>
+            console.log('✅ Firebase inicializado com sucesso');
+            
+        } catch (error) {
+            console.error('❌ Erro ao inicializar Firebase:', error);
+        }
+    });
+</script>
 </head>
 <body>
     <!-- Header -->
@@ -259,11 +254,11 @@
             <div class="contact-info">
                 <div class="contact-item">
                     <h3>ENDEREÇO</h3>
-                    <p>Rua André Molina, 156 - Piravevê, Ivinhema - MS, 79740-000</p>
+                    <p>Rua André Molina, 145 - Piravevê, Ivinhema - MS, 79740-000</p>
                 </div>
                 <div class="contact-item">
                     <h3>TELEFONE & WHATSAPP</h3>
-                    <p>(67) 9999-8888</p>
+                    <p>(67) 99866-8032</p>
                 </div>
                 <div class="contact-item">
                     <h3>HORÁRIO DE FUNCIONAMENTO</h3>

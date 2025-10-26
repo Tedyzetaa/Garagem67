@@ -2,7 +2,7 @@
 class App {
     constructor() {
         this.config = {
-            whatsappNumber: '556799998888', // ⭐ NÚMERO DO WHATSAPP - ALTERE AQUI ⭐
+            whatsappNumber: '5567998668032', // ⭐ NÚMERO DO WHATSAPP - ALTERE AQUI ⭐
             whatsappMessage: {
                 prefix: '*🛵 NOVO PEDIDO - GARAGEM 67*',
                 suffix: '*📱 Via: Site Garagem 67*'
