@@ -3,3 +3,4 @@ echo "garagem67-c38cf-firebase-adminsdk-*.json" >> .gitignore
 echo ".env" >> .gitignore
 echo "*.key" >> .gitignore
 echo "*.pem" >> .gitignore
+echo "next.md" >> .gitignore
