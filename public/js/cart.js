@@ -50,12 +50,6 @@ class CartManager {
                 console.log('🎯🎯🎯 BOTÃO FINALIZAR PEDIDO CLICADO!');
                 this.handleCheckout();
             });
-            
-            // Também adicionar o onclick para garantir
-            checkoutBtn.onclick = () => {
-                console.log('🎯🎯🎯 BOTÃO FINALIZAR PEDIDO CLICADO (onclick)!');
-                this.handleCheckout();
-            };
         } else {
             console.warn('⚠️ Botão checkout-btn não encontrado');
         }
@@ -87,7 +81,7 @@ class CartManager {
         
         this.saveCart();
         this.updateCartDisplay();
-        this.showAddToCartNotification(item.name);
+        this.showAddToCartNotification(item.name, item.quantity);
     }
 
     removeItem(itemId) {
@@ -176,12 +170,12 @@ class CartManager {
         `).join('');
     }
 
-    showAddToCartNotification(itemName) {
+    showAddToCartNotification(itemName, quantity) {
         // Criar notificação visual
         const notification = document.createElement('div');
         notification.className = 'add-to-cart-notification';
         notification.innerHTML = `
-            <span>✅ ${itemName} adicionado ao carrinho!</span>
+            <span>✅ ${quantity}x ${itemName} adicionado ao carrinho!</span>
         `;
         
         document.body.appendChild(notification);
@@ -234,17 +228,6 @@ class CartManager {
         // Disparar evento para abrir modal de login
         const loginEvent = new CustomEvent('openLoginModal');
         document.dispatchEvent(loginEvent);
-        
-        // Alternativa: abrir modal diretamente se o evento não funcionar
-        setTimeout(() => {
-            const loginModal = document.getElementById('login-modal');
-            if (loginModal) {
-                loginModal.style.display = 'block';
-                console.log('✅ Modal de login aberto diretamente');
-            } else {
-                console.error('❌ Modal de login não encontrado');
-            }
-        }, 100);
     }
 
     proceedToAddressModal() {
@@ -278,10 +261,6 @@ class CartManager {
                 if (userData.cep) document.getElementById('address-cep').value = userData.cep;
                 if (userData.complemento) document.getElementById('address-complemento').value = userData.complemento;
             }
-            
-            console.log('✅ Modal de endereço aberto');
-        } else {
-            console.error('❌ Modal de endereço não encontrado');
         }
     }
 
@@ -298,7 +277,6 @@ class CartManager {
     saveUserData(userData) {
         try {
             localStorage.setItem('garagem67_user_data', JSON.stringify(userData));
-            console.log('💾 Dados do usuário salvos:', userData);
         } catch (error) {
             console.error('❌ Erro ao salvar dados do usuário:', error);
         }
@@ -334,8 +312,6 @@ class CartManager {
 
     openWhatsApp(orderData) {
         try {
-            console.log('📤 Preparando mensagem do WhatsApp...');
-            
             const message = `🛒 *PEDIDO - GARAGEM 67*\n\n` +
                            `*Cliente:* ${orderData.userName || 'Não informado'}\n` +
                            `*Telefone:* ${orderData.userPhone || 'Não informado'}\n` +
@@ -344,11 +320,9 @@ class CartManager {
                            `*Total: R$ ${orderData.total}*\n\n` +
                            `_Pedido gerado via site Garagem 67_`;
 
-            // ✅ URL CORRETA - usando o número configurado no app.js
             const whatsappNumber = window.appConfig?.whatsappNumber || '5567998668032';
             const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
             
-            console.log('📤 Abrindo WhatsApp:', whatsappUrl);
             window.open(whatsappUrl, '_blank');
             
         } catch (error) {
@@ -359,7 +333,6 @@ class CartManager {
 
     handleAddressSubmit(event) {
         event.preventDefault();
-        console.log('📝 Formulário de endereço submetido...');
         
         // Coletar dados do formulário
         const userData = {
@@ -403,33 +376,32 @@ document.addEventListener('DOMContentLoaded', function() {
             window.cartManager.handleAddressSubmit(event);
         });
     }
-    
-    console.log('🛒 Serviço de carrinho inicializado');
 });
 
-// CSS para notificações (adicionar ao CSS existente)
-const cartStyles = `
-.add-to-cart-notification {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    background: #d4af37;
-    color: #1a1a1a;
-    padding: 15px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    z-index: 10000;
-    transform: translateX(400px);
-    transition: transform 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
+// CSS para notificações
+(function() {
+    const cartStyles = `
+    .add-to-cart-notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: #d4af37;
+        color: #1a1a1a;
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        z-index: 10000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
 
-.add-to-cart-notification.show {
-    transform: translateX(0);
-}
-`;
+    .add-to-cart-notification.show {
+        transform: translateX(0);
+    }
+    `;
 
-// Adicionar estilos ao documento
-const styleSheet = document.createElement('style');
-styleSheet.textContent = cartStyles;
-document.head.appendChild(styleSheet);
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = cartStyles;
+    document.head.appendChild(styleSheet);
+})();
