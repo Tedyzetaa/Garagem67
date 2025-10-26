@@ -1,159 +1,349 @@
-// Gerenciador do Menu
+// menu.js - Sistema de cardápio interativo
 class MenuManager {
-    constructor(menuData) {
-        this.menuData = menuData;
+    constructor() {
+        this.categories = {
+            bebidas: [
+                {
+                    id: "1",
+                    name: "HEINEKEN LONG NECK",
+                    description: "Cerveja premium holandesa, sabor suave e refrescante",
+                    price: 12.00,
+                    image: "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&h=300&fit=crop",
+                    category: "bebidas"
+                },
+                {
+                    id: "2", 
+                    name: "BUDWEISER LONG NECK",
+                    description: "Cerveja americana, conhecida como a Rainha das Cervejas",
+                    price: 10.00,
+                    image: "https://images.unsplash.com/photo-1566633808645-73aaff1b6d99?w=400&h=300&fit=crop",
+                    category: "bebidas"
+                },
+                {
+                    id: "3",
+                    name: "CORONA EXTRA",
+                    description: "Cerveja mexicana leve e refrescante, ideal com limão",
+                    price: 15.90,
+                    image: "https://images.unsplash.com/photo-1586993456357-62daa76d6d39?w=400&h=300&fit=crop", 
+                    category: "bebidas"
+                },
+                {
+                    id: "4",
+                    name: "BECKS",
+                    description: "Cerveja alemã puro malte, sabor tradicional e encorpado",
+                    price: 14.90,
+                    image: "https://images.unsplash.com/photo-1618885472187-470dc06697b7?w=400&h=300&fit=crop",
+                    category: "bebidas"
+                },
+                {
+                    id: "5",
+                    name: "SPATEN",
+                    description: "Cerveja alemã clássica, sabor equilibrado e aromático",
+                    price: 13.90,
+                    image: "https://images.unsplash.com/photo-1571613316887-6f8d5c8117be?w=400&h=300&fit=crop",
+                    category: "bebidas"
+                },
+                {
+                    id: "6",
+                    name: "STELLA ARTOIS",
+                    description: "Cerveja belga premium, sabor refinado e elegante",
+                    price: 14.90,
+                    image: "https://images.unsplash.com/photo-1600788879271-6c969b4b570d?w=400&h=300&fit=crop",
+                    category: "bebidas"
+                }
+            ],
+            comidas: [
+                {
+                    id: "7",
+                    name: "PORÇÃO DE BATATA FRITA",
+                    description: "Batata frita crocante temperada com ervas finas",
+                    price: 25.00,
+                    image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop",
+                    category: "comidas"
+                },
+                {
+                    id: "8",
+                    name: "PORÇÃO DE MANDIOCA",
+                    description: "Mandioca frita dourada com queijo coalho",
+                    price: 28.00,
+                    image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop",
+                    category: "comidas"
+                },
+                {
+                    id: "9",
+                    name: "PORÇÃO DE FRANGO A PASSARINHO",
+                    description: "Pedaços de frango empanados e fritos, crocantes por fora e suculentos por dentro",
+                    price: 35.00,
+                    image: "https://images.unsplash.com/photo-1626645735736-86fea8a58fd8?w=400&h=300&fit=crop",
+                    category: "comidas"
+                },
+                {
+                    id: "10",
+                    name: "PORÇÃO DE CALABRESA ACEBOLADA",
+                    description: "Calabresa fatiada grelhada com cebolas em rodelas",
+                    price: 30.00,
+                    image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop",
+                    category: "comidas"
+                }
+            ],
+            drinks: [
+                {
+                    id: "11",
+                    name: "CAIPIRINHA DE VODKA",
+                    description: "Tradicional caipirinha com vodka, limão, açúcar e gelo",
+                    price: 18.00,
+                    image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=300&fit=crop",
+                    category: "drinks"
+                },
+                {
+                    id: "12",
+                    name: "MOJITO",
+                    description: "Rum, limão, hortelã, açúcar e água com gás",
+                    price: 22.00,
+                    image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop",
+                    category: "drinks"
+                },
+                {
+                    id: "13",
+                    name: "COSMOPOLITAN",
+                    description: "Vodka, licor de laranja, suco de cranberry e limão",
+                    price: 25.00,
+                    image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop",
+                    category: "drinks"
+                },
+                {
+                    id: "14",
+                    name: "NEGRONI",
+                    description: "Gin, vermute tinto e Campari, clássico italiano",
+                    price: 28.00,
+                    image: "https://images.unsplash.com/photo-1570593742245-4b2c2b591b6b?w=400&h=300&fit=crop",
+                    category: "drinks"
+                },
+                {
+                    id: "15",
+                    name: "MARGARITA",
+                    description: "Tequila, licor de laranja e suco de limão, borda com sal",
+                    price: 24.00,
+                    image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop",
+                    category: "drinks"
+                },
+                {
+                    id: "16",
+                    name: "PIÑA COLADA",
+                    description: "Rum, leite de coco e suco de abacaxi, drink tropical",
+                    price: 26.00,
+                    image: "https://images.unsplash.com/photo-1578024989063-ba516d26f760?w=400&h=300&fit=crop",
+                    category: "drinks"
+                }
+            ]
+        };
+        
         this.currentCategory = 'bebidas';
         this.init();
     }
 
     init() {
-        this.renderMenu();
+        console.log('📋 Inicializando MenuManager...');
         this.setupEventListeners();
-    }
-
-    renderMenu() {
-        const container = document.getElementById('menu-items-container');
-        if (!container) return;
-
-        let html = '';
-        
-        // Renderizar cada categoria
-        for (const [category, items] of Object.entries(this.menuData)) {
-            const isActive = category === this.currentCategory ? 'active' : '';
-            
-            html += `
-                <div id="${category}" class="menu-category ${isActive}">
-                    ${items.map(item => this.renderMenuItem(item)).join('')}
-                </div>
-            `;
-        }
-        
-        container.innerHTML = html;
-    }
-
-    renderMenuItem(item) {
-        return `
-            <div class="menu-item">
-                <div class="item-info">
-                    <h3>${item.name}</h3>
-                    <p>${item.description}</p>
-                    <span class="price">${app.formatPrice(item.price)}</span>
-                </div>
-                <div class="item-controls">
-                    <div class="quantity-selector">
-                        <button class="qty-btn minus" data-id="${item.id}">-</button>
-                        <input type="number" class="qty-input" data-id="${item.id}" value="1" min="1" max="10">
-                        <button class="qty-btn plus" data-id="${item.id}">+</button>
-                    </div>
-                    <button class="btn-add" 
-                            data-id="${item.id}" 
-                            data-name="${item.name}" 
-                            data-price="${item.price}">
-                        Adicionar
-                    </button>
-                </div>
-            </div>
-        `;
+        this.loadMenu('bebidas');
     }
 
     setupEventListeners() {
-        // Navegação entre categorias
-        document.querySelectorAll('.menu-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                this.switchCategory(e.target.getAttribute('data-category'));
+        // Tabs do menu
+        const menuTabs = document.querySelectorAll('.menu-tab');
+        menuTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const category = tab.getAttribute('data-category');
+                this.switchCategory(category);
             });
         });
 
-        // Controles de quantidade
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('qty-btn')) {
-                this.handleQuantityChange(e.target);
-            }
-            
-            if (e.target.classList.contains('btn-add')) {
-                this.handleAddToCart(e.target);
-            }
-        });
-
-        // Input de quantidade manual
-        document.addEventListener('input', (e) => {
-            if (e.target.classList.contains('qty-input')) {
-                this.validateQuantityInput(e.target);
-            }
+        // Evento personalizado para adicionar ao carrinho
+        document.addEventListener('addToCartFromMenu', (event) => {
+            this.addToCart(event.detail);
         });
     }
 
     switchCategory(category) {
-        this.currentCategory = category;
+        console.log(`🔄 Alternando para categoria: ${category}`);
         
-        // Atualizar abas
+        // Atualizar tabs ativas
         document.querySelectorAll('.menu-tab').forEach(tab => {
             tab.classList.remove('active');
         });
         document.querySelector(`[data-category="${category}"]`).classList.add('active');
         
-        // Atualizar categorias
-        document.querySelectorAll('.menu-category').forEach(cat => {
-            cat.classList.remove('active');
-        });
-        document.getElementById(category).classList.add('active');
+        // Carregar menu da categoria
+        this.loadMenu(category);
+        this.currentCategory = category;
     }
 
-    handleQuantityChange(button) {
-        const isPlus = button.classList.contains('plus');
-        const id = button.getAttribute('data-id');
-        const input = document.querySelector(`.qty-input[data-id="${id}"]`);
+    loadMenu(category) {
+        const container = document.getElementById('menu-items-container');
+        if (!container) return;
+
+        const items = this.categories[category] || [];
         
-        if (!input) return;
-        
-        let value = parseInt(input.value) || 1;
-        
-        if (isPlus) {
-            value = Math.min(10, value + 1);
-        } else {
-            value = Math.max(1, value - 1);
+        if (items.length === 0) {
+            container.innerHTML = '<div class="empty-menu-message">Nenhum item disponível nesta categoria</div>';
+            return;
         }
-        
-        input.value = value;
-        this.updateQuantityButtons(id, value);
+
+        container.innerHTML = items.map(item => `
+            <div class="menu-item" data-id="${item.id}">
+                <div class="menu-item-image">
+                    <img src="${item.image}" alt="${item.name}" loading="lazy">
+                </div>
+                <div class="menu-item-content">
+                    <h3>${item.name}</h3>
+                    <p class="menu-item-description">${item.description}</p>
+                    <div class="menu-item-footer">
+                        <span class="menu-item-price">R$ ${item.price.toFixed(2)}</span>
+                        <button class="btn-add-to-cart" onclick="menuManager.addToCart(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                            <span class="btn-icon">+</span>
+                            Adicionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        console.log(`📦 ${items.length} itens carregados na categoria ${category}`);
     }
 
-    validateQuantityInput(input) {
-        let value = parseInt(input.value) || 1;
-        value = Math.max(1, Math.min(10, value));
-        input.value = value;
+    addToCart(item) {
+        console.log('🛒 Adicionando ao carrinho do menu:', item);
         
-        const id = input.getAttribute('data-id');
-        this.updateQuantityButtons(id, value);
-    }
-
-    updateQuantityButtons(id, value) {
-        const minusBtn = document.querySelector(`.qty-btn.minus[data-id="${id}"]`);
-        const plusBtn = document.querySelector(`.qty-btn.plus[data-id="${id}"]`);
-        
-        if (minusBtn) minusBtn.disabled = value <= 1;
-        if (plusBtn) plusBtn.disabled = value >= 10;
-    }
-
-    handleAddToCart(button) {
-        const id = button.getAttribute('data-id');
-        const name = button.getAttribute('data-name');
-        const price = parseFloat(button.getAttribute('data-price'));
-        const quantityInput = document.querySelector(`.qty-input[data-id="${id}"]`);
-        const quantity = parseInt(quantityInput?.value) || 1;
-        
-        // Disparar evento customizado para o carrinho
-        const event = new CustomEvent('addToCart', {
-            detail: { id, name, price, quantity }
+        // Disparar evento para o CartManager
+        const addToCartEvent = new CustomEvent('addToCart', {
+            detail: {
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: 1
+            }
         });
-        document.dispatchEvent(event);
+        document.dispatchEvent(addToCartEvent);
+
+        // Feedback visual
+        this.showAddToCartFeedback(item.name);
+    }
+
+    showAddToCartFeedback(itemName) {
+        // Criar elemento de feedback
+        const feedback = document.createElement('div');
+        feedback.className = 'add-to-cart-feedback';
+        feedback.innerHTML = `
+            <span>✅ ${itemName} adicionado ao carrinho!</span>
+        `;
         
-        // Resetar quantidade
-        if (quantityInput) {
-            quantityInput.value = 1;
-            this.updateQuantityButtons(id, 1);
+        document.body.appendChild(feedback);
+        
+        // Animação
+        setTimeout(() => {
+            feedback.classList.add('show');
+        }, 100);
+        
+        // Remover após 2 segundos
+        setTimeout(() => {
+            feedback.classList.remove('show');
+            setTimeout(() => {
+                if (feedback.parentNode) {
+                    feedback.parentNode.removeChild(feedback);
+                }
+            }, 300);
+        }, 2000);
+    }
+
+    searchMenu(query) {
+        if (!query.trim()) {
+            this.loadMenu(this.currentCategory);
+            return;
         }
-        
-        app.showNotification(`${name} (${quantity}x) adicionado ao carrinho!`);
+
+        const allItems = Object.values(this.categories).flat();
+        const filteredItems = allItems.filter(item => 
+            item.name.toLowerCase().includes(query.toLowerCase()) ||
+            item.description.toLowerCase().includes(query.toLowerCase())
+        );
+
+        const container = document.getElementById('menu-items-container');
+        if (!container) return;
+
+        if (filteredItems.length === 0) {
+            container.innerHTML = `
+                <div class="empty-search-message">
+                    <p>Nenhum item encontrado para "${query}"</p>
+                    <p>Tente outros termos ou volte ao menu principal</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filteredItems.map(item => `
+            <div class="menu-item" data-id="${item.id}">
+                <div class="menu-item-image">
+                    <img src="${item.image}" alt="${item.name}" loading="lazy">
+                </div>
+                <div class="menu-item-content">
+                    <h3>${item.name}</h3>
+                    <p class="menu-item-description">${item.description}</p>
+                    <div class="menu-item-footer">
+                        <span class="menu-item-price">R$ ${item.price.toFixed(2)}</span>
+                        <button class="btn-add-to-cart" onclick="menuManager.addToCart(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                            <span class="btn-icon">+</span>
+                            Adicionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
 }
+
+// CSS para feedback visual
+const menuStyles = `
+.add-to-cart-feedback {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: #d4af37;
+    color: #1a1a1a;
+    padding: 12px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-size: 14px;
+}
+
+.add-to-cart-feedback.show {
+    transform: translateX(0);
+}
+
+.empty-menu-message,
+.empty-search-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+    font-style: italic;
+}
+
+.empty-search-message p:first-child {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+`;
+
+// Adicionar estilos ao documento
+const styleSheet = document.createElement('style');
+styleSheet.textContent = menuStyles;
+document.head.appendChild(styleSheet);
+
+// Inicialização quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    window.menuManager = new MenuManager();
+    console.log('📋 Sistema de menu inicializado');
+});
