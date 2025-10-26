@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garagem 67 - Bar e Conveniência</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+        // Configuração direta do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbgzZ21aPFHmeoeahk40eMllzEfCcI7BQ",
+            authDomain: "garagem67-c38cf.firebaseapp.com",
+            projectId: "garagem67-c38cf",
+            storageBucket: "garagem67-c38cf.appspot.com",
+            messagingSenderId: "579533283807",
+            appId: "1:579533283807:web:your_app_id_here",
+            measurementId: "G-YOUR_MEASUREMENT_ID"
+        };
+
+        // Inicializar Firebase quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                console.log('✅ Firebase inicializado com sucesso');
+                
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log('👤 Usuário já logado:', user.email);
+                    } else {
+                        console.log('🔒 Nenhum usuário logado');
+                    }
+                });
+                
+            } catch (error) {
+                console.error('❌ Erro ao inicializar Firebase:', error);
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>GARAGEM 67</h1>
+                <p>BAR E CONVENIÊNCIA</p>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#menu">Cardápio</a></li>
+                    <li><a href="#about">Sobre</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+                
+                <div id="user-menu" class="user-menu">
+                    <div class="user-menu-item">
+                        <a href="#historico">Meus Pedidos</a>
+                    </div>
+                </div>
+            </nav>
+            <div class="user-area">
+                <button id="login-btn" class="btn-login">
+                    <span class="google-icon">🚀</span>
+                    Entrar
+                </button>
+                <div id="user-info" class="user-info" style="display: none;">
+                    <img id="user-avatar" src="" alt="Avatar" class="user-avatar">
+                    <span id="user-name" class="user-name"></span>
+                    <button id="logout-btn" class="btn-logout">Sair</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modal de Login -->
+    <div id="login-modal" class="login-modal">
+        <div class="login-content">
+            <div class="login-header">
+                <h2>ENTRAR NA GARAGEM 67</h2>
+                <span class="login-close">&times;</span>
+            </div>
+            <div class="login-body">
+                <p class="login-subtitle">Escolha como deseja fazer login</p>
+                
+                <!-- Botão Principal Único -->
+                <button id="btn-login-main" class="btn-login-main">
+                    <span class="btn-main-icon">🔐</span>
+                    <span class="btn-main-text">Fazer Login</span>
+                </button>
+
+                <!-- Opções que aparecem após clicar no botão principal -->
+                <div id="login-options" class="login-options" style="display: none;">
+                    <button id="btn-google-login" class="btn-login-option google-option">
+                        <span class="option-icon">🚗</span>
+                        <span class="option-text">Continuar com Google</span>
+                    </button>
+                    
+                    <button id="btn-email-login" class="btn-login-option email-option">
+                        <span class="option-icon">📧</span>
+                        <span class="option-text">Entrar com Email</span>
+                    </button>
+                </div>
+
+                <!-- Formulário de Email -->
+                <div id="email-login-form" class="email-login-form" style="display: none;">
+                    <div class="form-group">
+                        <input type="email" id="login-email" placeholder="Seu email" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="login-password" placeholder="Sua senha" class="form-input">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="btn-back" class="btn-back">Voltar</button>
+                        <button type="button" id="btn-email-submit" class="btn-submit">Entrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Endereço -->
+    <div id="address-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>DADOS DE ENTREGA</h2>
+            <form id="address-form" class="cadastro-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address-nome">Nome Completo *</label>
+                        <input type="text" id="address-nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-telefone">Telefone/WhatsApp *</label>
+                        <input type="tel" id="address-telefone" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address-endereco">Endereço Completo *</label>
+                    <input type="text" id="address-endereco" placeholder="Rua, número, bairro" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address-cidade">Cidade *</label>
+                        <input type="text" id="address-cidade" value="Ivinhema" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-estado">Estado *</label>
+                        <select id="address-estado" required>
+                            <option value="MS" selected>Mato Grosso do Sul</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-cep">CEP *</label>
+                        <input type="text" id="address-cep" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address-complemento">Complemento</label>
+                    <input type="text" id="address-complemento" placeholder="Apartamento, bloco, referência...">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Confirmar Endereço e Finalizar Pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h2>EXPERIÊNCIA ÚNICA EM DRINKS</h2>
+            <p>Descubra sabores extraordinários em nosso bar sofisticado, onde cada drink é uma obra de arte</p>
+            <a href="#menu" class="btn-primary">EXPLORAR CARDÁPIO</a>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu">
+        <div class="container">
+            <h2 class="section-title">NOSSA SELEÇÃO</h2>
+            
+            <div class="menu-nav">
+                <button class="menu-tab active" data-category="bebidas">BEBIDAS</button>
+                <button class="menu-tab" data-category="comidas">ACOMPANHAMENTOS</button>
+                <button class="menu-tab" data-category="drinks">DRINKS ESPECIAIS</button>
+            </div>
+            
+            <div class="menu-items" id="menu-items-container">
+                <!-- Menu items serão carregados via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section class="cart-section">
+        <div class="container">
+            <div class="cart-container">
+                <h2>SEU PEDIDO</h2>
+                <div id="cart-items" class="cart-items">
+                    <div class="empty-cart-message">Nenhum item adicionado ao carrinho</div>
+                </div>
+                <div class="cart-total">
+                    <p>Total: <span id="cart-total">R$ 0,00</span></p>
+                </div>
+                <div class="cart-actions">
+                    <button id="clear-cart" class="btn-secondary">Limpar Carrinho</button>
+                    <button id="checkout-btn" class="btn-primary" disabled>Finalizar Pedido</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Histórico de Pedidos Section -->
+    <section id="historico" class="historico-section">
+        <div class="container">
+            <div class="historico-container">
+                <h2 class="section-title">MEUS PEDIDOS</h2>
+                <div id="historico-lista" class="historico-lista">
+                    <div class="empty-historico-message">
+                        <p>Nenhum pedido encontrado</p>
+                        <p>Faça seu primeiro pedido e acompanhe o status aqui!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">NOSSA HISTÓRIA</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Desde 2025, a Garagem 67 tem sido o ponto de encontro para amantes de drinks sofisticados e experiências gastronômicas únicas. Nossa missão é transformar momentos comuns em experiências extraordinárias.</p>
+                    <p>Com um ambiente aconchegante e uma equipe de bartenders especializados, criamos drinks que contam histórias e despertam sensações. Cada receita é cuidadosamente elaborada com ingredientes selecionados e técnicas apuradas.</p>
+                    <p>Nosso diferencial é a busca constante pela excelência, aliada à conveniência de um serviço de delivery 24 horas que leva nossa experiência diretamente para você.</p>
+                </div>
+                <div class="about-image"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">CONTATO</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>ENDEREÇO</h3>
+                    <p>Rua André Molina, 156 - Piravevê, Ivinhema - MS, 79740-000</p>
+                </div>
+                <div class="contact-item">
+                    <h3>TELEFONE & WHATSAPP</h3>
+                    <p>(67) 9999-8888</p>
+                </div>
+                <div class="contact-item">
+                    <h3>HORÁRIO DE FUNCIONAMENTO</h3>
+                    <p>Delivery - 24 horas<br>Bar - 18h às 02h</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Garagem 67 Bar e Conveniência. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/menu.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/orders.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

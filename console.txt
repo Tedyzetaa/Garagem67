@@ -1,0 +1,73 @@
+📋 Instruções de Configuração
+1. Configurar Backend (Autenticação Google):
+bash
+
+cd backend
+npm install
+
+# Configurar variáveis de ambiente
+cp .env.example .env
+# Edite o .env com suas credenciais do Google Cloud
+
+2. Obter Credenciais do Google:
+
+    Acesse Google Cloud Console
+
+    Crie um novo projeto ou selecione um existente
+
+    Ative a API do Google+
+
+    Crie credenciais OAuth 2.0
+
+    Adicione http://localhost:3001 como URI de redirecionamento
+
+3. Deploy no Vercel:
+bash
+
+# Instalar Vercel CLI
+npm i -g vercel
+
+# Fazer deploy
+vercel
+
+# Configurar variáveis de ambiente no Vercel
+vercel env add GOOGLE_CLIENT_ID
+vercel env add GOOGLE_CLIENT_SECRET  
+vercel env add JWT_SECRET
+
+🚀 Funcionalidades Implementadas
+✅ 1. Botão "Fazer Pedido via WhatsApp"
+
+    Gera mensagem completa com todos os dados do cliente
+
+    Inclui itens do pedido e valor total
+
+    Envia diretamente para o WhatsApp do estabelecimento
+
+✅ 2. Arquivos Separados
+
+    HTML limpo e semântico
+
+    CSS organizado em módulos
+
+    JavaScript modularizado por funcionalidade
+
+✅ 3. Backend para Autenticação Google
+
+    API REST completa
+
+    Autenticação JWT
+
+    Pronto para deploy no Vercel
+
+✅ 4. Melhorias Adicionais
+
+    Código mais organizado e manutenível
+
+    Sistema de notificações melhorado
+
+    Validações de formulário
+
+    Design responsivo aprimorado
+
+O projeto agora está 100% pronto para deploy no Vercel com todas as funcionalidades solicitadas! 🎉
