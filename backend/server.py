@@ -11,23 +11,27 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', '*')
         super().end_headers()
 
-def run_server(port=8000):
+def run_server():
+    # PORT do Railway ou 8000 local
+    PORT = int(os.environ.get('PORT', 8000))
+    
     # Muda para o diretório onde o script está localizado
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     
     print(f"📍 Diretório atual: {os.getcwd()}")
     print(f"📁 Arquivos no diretório: {os.listdir('.')}")
+    print(f"🚀 Servidor da Garagem 67 rodando na porta {PORT}")
     
-    with socketserver.TCPServer(("", port), Handler) as httpd:
-        print(f"🚀 Servidor da Garagem 67 rodando em http://localhost:{port}")
-        print("📱 Acesse pelo navegador para testar o sistema")
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print(f"🌐 Acesse: http://localhost:{PORT}")
         print("⏹️  Pressione Ctrl+C para parar o servidor\n")
         
-        # Abre o navegador automaticamente
-        try:
-            webbrowser.open(f'http://localhost:{port}')
-        except:
-            print("⚠️  Não foi possível abrir o navegador automaticamente")
+        # Só abre navegador localmente
+        if os.environ.get('RAILWAY_ENV') is None:
+            try:
+                webbrowser.open(f'http://localhost:{PORT}')
+            except:
+                print("⚠️  Não foi possível abrir o navegador automaticamente")
         
         try:
             httpd.serve_forever()
@@ -35,11 +39,4 @@ def run_server(port=8000):
             print("\n🛑 Servidor parado pelo usuário")
 
 if __name__ == "__main__":
-    PORT = 8000
-    if len(sys.argv) > 1:
-        try:
-            PORT = int(sys.argv[1])
-        except ValueError:
-            print("⚠️  Porta inválida. Usando porta padrão 8000")
-    
-    run_server(PORT)    
+    run_server()
