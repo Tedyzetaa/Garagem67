@@ -32,6 +32,14 @@ class AuthService {
         const btnEmailLogin = document.getElementById('btn-email-login');
         const emailLoginForm = document.getElementById('email-login-form');
         const btnBack = document.getElementById('btn-back');
+        const headerLoginBtn = document.getElementById('login-btn');
+            if (headerLoginBtn) {
+            headerLoginBtn.addEventListener('click', () => {
+                console.log('👆 Botão Entrar do header clicado');
+                loginModal.style.display = 'block';
+                this.resetLoginModal();
+         });
+    }
 
         // Fechar modal
         if (loginClose) {
