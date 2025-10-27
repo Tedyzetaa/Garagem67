@@ -1942,3 +1942,153 @@ body {
     color: #666;
     cursor: not-allowed;
 }
+/* Confirmação de Entrega */
+.delivery-confirmation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.delivery-confirmation.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.confirmation-content {
+  background: #1a1a1a;
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.delivery-confirmation.show .confirmation-content {
+  transform: scale(1);
+}
+
+.confirmation-header {
+  background: #d4af37;
+  color: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confirmation-header h3 {
+  margin: 0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.3em;
+}
+
+.close-confirmation {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #1a1a1a;
+  font-weight: bold;
+}
+
+.confirmation-body {
+  padding: 25px;
+}
+
+.delivery-info {
+  margin-bottom: 20px;
+}
+
+.delivery-info p {
+  margin: 12px 0;
+  color: #fff;
+  font-size: 1.1em;
+}
+
+.delivery-info strong {
+  color: #d4af37;
+}
+
+.status-pendente {
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.status-aceito {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.status-entregue {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.confirmation-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-track {
+  background: #d4af37;
+  color: #1a1a1a;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  flex: 1;
+  transition: background 0.3s ease;
+  font-size: 1em;
+}
+
+.btn-track:hover {
+  background: #f1c40f;
+}
+
+.btn-close {
+  background: #666;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  flex: 1;
+  transition: background 0.3s ease;
+  font-size: 1em;
+}
+
+.btn-close:hover {
+  background: #777;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .confirmation-actions {
+    flex-direction: column;
+  }
+  
+  .confirmation-content {
+    width: 95%;
+  }
+  
+  .delivery-info p {
+    font-size: 1em;
+  }
+}
