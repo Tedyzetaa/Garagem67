@@ -405,3 +405,157 @@ document.addEventListener('DOMContentLoaded', function() {
     styleSheet.textContent = cartStyles;
     document.head.appendChild(styleSheet);
 })();
+
+// cart.js - Adicionar esta classe
+class ExternalOrderService {
+  constructor() {
+    this.apiUrl = 'https://entregador67-production.up.railway.app/api/external/orders';
+  }
+
+  async sendOrderToDeliverySystem(orderData) {
+    try {
+      console.log('📤 Enviando pedido para sistema de entregas...', orderData);
+
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('✅ Pedido enviado para entregadores! ID:', result.internal_id);
+        return {
+          success: true,
+          deliveryId: result.internal_id,
+          message: 'Pedido enviado para entregadores com sucesso!'
+        };
+      } else {
+        console.warn('⚠️ Pedido não enviado para entregadores:', result.message);
+        return {
+          success: false,
+          message: result.message
+        };
+      }
+
+    } catch (error) {
+      console.error('❌ Erro ao enviar para entregadores:', error);
+      return {
+        success: false,
+        message: 'Erro de conexão com sistema de entregas'
+      };
+    }
+  }
+
+  async checkOrderStatus(orderId) {
+    try {
+      const response = await fetch(`${this.apiUrl}/${orderId}`);
+      const result = await response.json();
+      
+      return result.success ? result.order : null;
+    } catch (error) {
+      console.error('❌ Erro ao verificar status:', error);
+      return null;
+    }
+  }
+}
+
+// Modificar o método finalizeOrder no CartManager
+async finalizeOrder(userData) {
+  console.log('✅ Finalizando pedido...', userData);
+  
+  // Preparar dados para ambos os sistemas
+  const orderData = {
+    userName: userData.nome,
+    userPhone: userData.telefone,
+    userAddress: `${userData.endereco}, ${userData.cidade} - ${userData.estado}${userData.complemento ? ` (${userData.complemento})` : ''}`,
+    items: this.formatOrderItems(),
+    total: this.getTotal().toFixed(2),
+    timestamp: new Date().toISOString()
+  };
+
+  // Preparar dados para sistema de entregas
+  const externalOrderData = {
+    external_id: `garagem67_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    store_name: "Garagem 67 Bar e Conveniência",
+    store_phone: "67998668032",
+    customer: {
+      name: userData.nome,
+      phone: userData.telefone,
+      address: `${userData.endereco}, ${userData.cidade} - ${userData.estado}`,
+      complement: userData.complemento || ''
+    },
+    items: this.cart.map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price
+    })),
+    total: this.getTotal(),
+    description: this.formatOrderDescription(),
+    notes: 'Entregar com cuidado - Bebidas',
+    metadata: {
+      source: 'garagem67',
+      order_url: window.location.href
+    }
+  };
+
+  console.log('📦 Dados do pedido externo:', externalOrderData);
+
+  // ENVIAR PARA SISTEMA DE ENTREGAS (em paralelo)
+  const externalService = new ExternalOrderService();
+  const deliveryResult = await externalService.sendOrderToDeliverySystem(externalOrderData);
+
+  // Abrir WhatsApp (fluxo original)
+  this.openWhatsApp(orderData);
+  
+  // Mostrar confirmação do sistema de entregas
+  if (deliveryResult.success) {
+    this.showDeliveryConfirmation(deliveryResult.deliveryId);
+  }
+
+  // Limpar carrinho após pedido
+  this.clearCart();
+}
+
+// Adicionar método de confirmação de entrega
+showDeliveryConfirmation(deliveryId) {
+  const confirmation = `
+🎉 *PEDIDO CONFIRMADO NO SISTEMA!*
+
+📦 *Nº do Pedido:* ${deliveryId}
+🚚 *Status:* Aguardando entregador
+⏱️ *Previsão:* Em breve
+
+*Acompanhe pelo site:*
+https://entregador67.vercel.app
+
+_Obrigado pela preferência! 🍻_
+  `;
+  
+  // Criar elemento de confirmação
+  const confirmationEl = document.createElement('div');
+  confirmationEl.className = 'delivery-confirmation';
+  confirmationEl.innerHTML = `
+    <div class="confirmation-content">
+      <h3>✅ Pedido no Sistema de Entregas</h3>
+      <p><strong>Nº do Pedido:</strong> ${deliveryId}</p>
+      <p><strong>Status:</strong> Aguardando entregador</p>
+      <p><strong>Previsão:</strong> Em breve</p>
+      <button onclick="window.open('https://entregador67.vercel.app', '_blank')">
+        Acompanhar Entrega
+      </button>
+    </div>
+  `;
+  
+  document.body.appendChild(confirmationEl);
+  
+  // Mostrar e depois remover
+  setTimeout(() => confirmationEl.classList.add('show'), 100);
+  setTimeout(() => {
+    confirmationEl.classList.remove('show');
+    setTimeout(() => confirmationEl.remove(), 300);
+  }, 10000);
+}
