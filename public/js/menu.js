@@ -8,42 +8,48 @@ class MenuManager {
                     name: "HEINEKEN LONG NECK",
                     description: "Cerveja premium holandesa",
                     price: 12.00,
-                    category: "bebidas"
+                    category: "bebidas",
+                    image: "heineken-longneck.jpg"
                 },
                 {
                     id: "2", 
                     name: "BUDWEISER LONG NECK",
                     description: "Cerveja americana premium",
                     price: 10.00,
-                    category: "bebidas"
+                    category: "bebidas",
+                    image: "budweiser-longneck.jpg"
                 },
                 {
                     id: "3",
                     name: "CORONA EXTRA",
                     description: "Cerveja mexicana com limão",
                     price: 15.90,
-                    category: "bebidas"
+                    category: "bebidas",
+                    image: "corona-extra.jpg"
                 },
                 {
                     id: "4",
                     name: "BECKS",
                     description: "Cerveja alemã puro malte",
                     price: 14.90,
-                    category: "bebidas"
+                    category: "bebidas",
+                    image: "becks.jpg"
                 },
                 {
                     id: "5",
                     name: "SPATEN",
                     description: "Cerveja alemã clássica",
                     price: 13.90,
-                    category: "bebidas"
+                    category: "bebidas",
+                    image: "spaten.jpg"
                 },
                 {
                     id: "6",
                     name: "STELLA ARTOIS",
                     description: "Cerveja belga premium",
                     price: 14.90,
-                    category: "bebidas"
+                    category: "bebidas",
+                    image: "stella-artois.jpg"
                 }
             ],
             comidas: [
@@ -52,28 +58,32 @@ class MenuManager {
                     name: "PORÇÃO DE BATATA FRITA",
                     description: "Batata frita crocante com ervas",
                     price: 25.00,
-                    category: "comidas"
+                    category: "comidas",
+                    image: "porcao-batata.jpg"
                 },
                 {
                     id: "8",
                     name: "PORÇÃO DE MANDIOCA",
                     description: "Mandioca frita com queijo coalho",
                     price: 28.00,
-                    category: "comidas"
+                    category: "comidas",
+                    image: "porcao-mandioca.jpg"
                 },
                 {
                     id: "9",
                     name: "PORÇÃO DE FRANGO A PASSARINHO",
                     description: "Frango empanado crocante",
                     price: 35.00,
-                    category: "comidas"
+                    category: "comidas",
+                    image: "frango-passarinho.jpg"
                 },
                 {
                     id: "10",
                     name: "PORÇÃO DE CALABRESA ACEBOLADA",
                     description: "Calabresa grelhada com cebola",
                     price: 30.00,
-                    category: "comidas"
+                    category: "comidas",
+                    image: "calabresa-acebolada.jpg"
                 }
             ],
             drinks: [
@@ -82,42 +92,48 @@ class MenuManager {
                     name: "CAIPIRINHA DE VODKA",
                     description: "Vodka, limão, açúcar e gelo",
                     price: 18.00,
-                    category: "drinks"
+                    category: "drinks",
+                    image: "caipirinha-vodka.jpg"
                 },
                 {
                     id: "12",
                     name: "MOJITO",
                     description: "Rum, hortelã, limão e açúcar",
                     price: 22.00,
-                    category: "drinks"
+                    category: "drinks",
+                    image: "mojito.jpg"
                 },
                 {
                     id: "13",
                     name: "COSMOPOLITAN",
                     description: "Vodka, licor de laranja e cranberry",
                     price: 25.00,
-                    category: "drinks"
+                    category: "drinks",
+                    image: "cosmopolitan.jpg"
                 },
                 {
                     id: "14",
                     name: "NEGRONI",
                     description: "Gin, vermute e Campari",
                     price: 28.00,
-                    category: "drinks"
+                    category: "drinks",
+                    image: "negroni.jpg"
                 },
                 {
                     id: "15",
                     name: "MARGARITA",
                     description: "Tequila, licor de laranja e limão",
                     price: 24.00,
-                    category: "drinks"
+                    category: "drinks",
+                    image: "margarita.jpg"
                 },
                 {
                     id: "16",
                     name: "PIÑA COLADA",
                     description: "Rum, leite de coco e abacaxi",
                     price: 26.00,
-                    category: "drinks"
+                    category: "drinks",
+                    image: "pina-colada.jpg"
                 }
             ]
         };
@@ -173,22 +189,27 @@ class MenuManager {
             const quantity = this.getItemQuantity(item.id);
             return `
                 <div class="menu-item" data-id="${item.id}">
-                    <div class="item-info">
-                        <h3 class="item-name">${item.name}</h3>
-                        <p class="item-description">${item.description}</p>
-                        <p class="item-price">R$ ${item.price.toFixed(2)}</p>
+                    <div class="item-image">
+                        <img src="/img/${item.image}" alt="${item.name}" loading="lazy">
                     </div>
-                    <div class="item-controls">
-                        <div class="quantity-controls">
-                            <button class="qty-btn minus" onclick="menuManager.decreaseQuantity('${item.id}')">-</button>
-                            <span class="quantity">${quantity}</span>
-                            <button class="qty-btn plus" onclick="menuManager.increaseQuantity('${item.id}')">+</button>
+                    <div class="item-content">
+                        <div class="item-info">
+                            <h3 class="item-name">${item.name}</h3>
+                            <p class="item-description">${item.description}</p>
+                            <p class="item-price">R$ ${item.price.toFixed(2)}</p>
                         </div>
-                        <button class="add-btn ${quantity > 0 ? 'active' : ''}" 
-                                onclick="menuManager.addToCart('${item.id}')"
-                                ${quantity === 0 ? 'disabled' : ''}>
-                            ${quantity > 0 ? `Adicionar (${quantity})` : 'Adicionar'}
-                        </button>
+                        <div class="item-controls">
+                            <div class="quantity-controls">
+                                <button class="qty-btn minus" onclick="menuManager.decreaseQuantity('${item.id}')">-</button>
+                                <span class="quantity">${quantity}</span>
+                                <button class="qty-btn plus" onclick="menuManager.increaseQuantity('${item.id}')">+</button>
+                            </div>
+                            <button class="add-btn ${quantity > 0 ? 'active' : ''}" 
+                                    onclick="menuManager.addToCart('${item.id}')"
+                                    ${quantity === 0 ? 'disabled' : ''}>
+                                ${quantity > 0 ? `Adicionar (${quantity})` : 'Adicionar'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -259,7 +280,8 @@ class MenuManager {
                 id: item.id,
                 name: item.name,
                 price: item.price,
-                quantity: quantity
+                quantity: quantity,
+                image: item.image // Mantemos a imagem apenas para referência, não será usada no carrinho
             }
         });
         document.dispatchEvent(addToCartEvent);
@@ -316,8 +338,8 @@ const menuStyles = `
     padding: 20px;
     margin-bottom: 15px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 20px;
     transition: all 0.3s ease;
 }
 
@@ -325,6 +347,37 @@ const menuStyles = `
     border-color: #f1c40f;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.item-image {
+    flex: 0 0 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #333;
+    transition: all 0.3s ease;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.menu-item:hover .item-image {
+    border-color: #d4af37;
+}
+
+.menu-item:hover .item-image img {
+    transform: scale(1.05);
+}
+
+.item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .item-info {
@@ -344,6 +397,7 @@ const menuStyles = `
     color: #cccccc;
     margin: 0 0 8px 0;
     font-size: 0.9em;
+    line-height: 1.4;
 }
 
 .item-price {
@@ -443,6 +497,45 @@ const menuStyles = `
 
 .add-to-cart-feedback.show {
     transform: translateX(0);
+}
+
+/* Responsividade para imagens */
+@media (max-width: 768px) {
+    .menu-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .item-image {
+        flex: 0 0 120px;
+        height: 120px;
+        margin: 0 auto;
+    }
+    
+    .item-controls {
+        justify-content: center;
+    }
+    
+    .item-content {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .item-image {
+        flex: 0 0 100px;
+        height: 100px;
+    }
+    
+    .item-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .quantity-controls {
+        justify-content: center;
+    }
 }
 `;
 
