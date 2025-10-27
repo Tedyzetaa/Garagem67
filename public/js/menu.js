@@ -350,12 +350,13 @@ const menuStyles = `
 }
 
 .item-image {
-    flex: 0 0 100px;
-    height: 100px;
+    flex: 0 0 140px;
+    height: 140px;
     border-radius: 8px;
     overflow: hidden;
     border: 2px solid #333;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .item-image img {
@@ -508,8 +509,8 @@ const menuStyles = `
     }
     
     .item-image {
-        flex: 0 0 120px;
-        height: 120px;
+        flex: 0 0 160px;
+        height: 160px;
         margin: 0 auto;
     }
     
@@ -524,8 +525,8 @@ const menuStyles = `
 
 @media (max-width: 480px) {
     .item-image {
-        flex: 0 0 100px;
-        height: 100px;
+        flex: 0 0 140px;
+        height: 140px;
     }
     
     .item-controls {
