@@ -1,183 +1,76 @@
-// Arquivo principal - Inicialização da aplicação
-class Garagem67App {
+// app.js - Inicialização geral da aplicação com configurações globais
+class App {
     constructor() {
-        this.currentUser = null;
-        this.cart = [];
-        this.menuData = [];
+        this.config = {
+            whatsappNumber: '5567998668032', // ⭐ NÚMERO DO WHATSAPP - ALTERE AQUI ⭐
+            // ⭐ CONFIGURAÇÃO DO BACKEND PARA INTEGRAÇÃO
+            backendUrl: 'https://entregador67-production.up.railway.app/api/external/orders',
+            whatsappMessage: {
+                prefix: '*🛵 NOVO PEDIDO - GARAGEM 67*',
+                suffix: '*📱 Via: Site Garagem 67*'
+            },
+            firebase: {
+                apiKey: "AIzaSyBbgzZ21aPFHmeoeahk40eMllzEfCcI7BQ",
+                authDomain: "garagem67-c38cf.firebaseapp.com",
+                projectId: "garagem67-c38cf",
+                storageBucket: "garagem67-c38cf.appspot.com",
+                messagingSenderId: "579533283807"
+            }
+        };
+        
         this.init();
     }
 
-    async init() {
-        console.log("🚀 Inicializando Garagem 67...");
+    init() {
+        console.log('🚀 Inicializando Garagem 67...');
+        console.log('📞 WhatsApp Configurado:', this.config.whatsappNumber);
+        console.log('🔗 Backend Configurado:', this.config.backendUrl);
         
-        // Carregar dados iniciais
-        await this.loadInitialData();
+        // Tornar config global
+        window.appConfig = this.config;
         
-        // Configurar eventos
-        this.setupEventListeners();
-        
-        // Inicializar módulos
-        this.initializeModules();
-        
-        console.log("✅ Aplicação inicializada com sucesso!");
-    }
-
-    async loadInitialData() {
-        // Carregar usuário do localStorage
-        this.loadUserFromStorage();
-        
-        // Carregar carrinho do localStorage
-        this.loadCartFromStorage();
-        
-        // Carregar dados do menu
-        this.menuData = await this.loadMenuData();
-    }
-
-    setupEventListeners() {
-        // Smooth scroll para navegação
-        this.setupSmoothScroll();
-        
-        // Eventos gerais
-        this.setupGeneralEvents();
-    }
-
-    initializeModules() {
-        // Inicializar módulos específicos
-        if (typeof MenuManager !== 'undefined') {
-            new MenuManager(this.menuData);
-        }
-        
-        if (typeof CartManager !== 'undefined') {
-            new CartManager();
-        }
-        
-        if (typeof AuthManager !== 'undefined') {
-            new AuthManager();
-        }
-        
-        if (typeof OrdersManager !== 'undefined') {
-            new OrdersManager();
-        }
-    }
-
-    setupSmoothScroll() {
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    }
-
-    setupGeneralEvents() {
-        // Fechar modais ao pressionar ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.closeAllModals();
-            }
-        });
-
-        // Prevenir envio de formulários com Enter
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && e.target.form) {
-                e.preventDefault();
-            }
-        });
-    }
-
-    closeAllModals() {
-        const modals = document.querySelectorAll('.modal, .login-modal');
-        modals.forEach(modal => {
-            modal.style.display = 'none';
-        });
-    }
-
-    loadUserFromStorage() {
-        const savedUser = localStorage.getItem('garagem67_user');
-        if (savedUser) {
-            this.currentUser = JSON.parse(savedUser);
-        }
-    }
-
-    saveUserToStorage() {
-        if (this.currentUser) {
-            localStorage.setItem('garagem67_user', JSON.stringify(this.currentUser));
-        }
-    }
-
-    loadCartFromStorage() {
-        const savedCart = localStorage.getItem('garagem67_cart');
-        if (savedCart) {
-            this.cart = JSON.parse(savedCart);
-        }
-    }
-
-    saveCartToStorage() {
-        localStorage.setItem('garagem67_cart', JSON.stringify(this.cart));
-    }
-
-    async loadMenuData() {
-        // Dados do menu - pode ser substituído por uma API
-        return {
-            bebidas: [
-                { id: 1, name: "CERVEJA ARTESANAL", description: "Cerveja local, produção limitada", price: 12.00 },
-                { id: 2, name: "WHISKY PREMIUM", description: "Escolha entre nossas marcas exclusivas", price: 25.00 },
-                { id: 3, name: "VODKA IMPORTADA", description: "Diversas marcas premium disponíveis", price: 18.00 },
-                { id: 4, name: "REFRIGERANTES", description: "Coca-Cola, Guaraná, Fanta e mais", price: 6.00 }
-            ],
-            comidas: [
-                { id: 5, name: "HAMBÚRGUER GOURMET", description: "180g, queijo brie, rúcula e molho especial", price: 28.00 },
-                { id: 6, name: "PORÇÃO DE BATATA", description: "Porção grande com queijo gratinado e bacon", price: 20.00 },
-                { id: 7, name: "ASINHA DE FRANGO", description: "Porção com 8 unidades, molho barbecue da casa", price: 32.00 },
-                { id: 8, name: "BRUSCHETTA ITALIANA", description: "Pão italiano, tomate, manjericão e azeite", price: 16.00 }
-            ],
-            drinks: [
-                { id: 9, name: "CAIPIRINHA PREMIUM", description: "Limão siciliano, açúcar demerara e cachaça artesanal", price: 18.00 },
-                { id: 10, name: "MOJITO CLÁSSICO", description: "Rum, hortelã fresca, limão e água com gás", price: 22.00 },
-                { id: 11, name: "OLD FASHIONED", description: "Whisky, açúcar, bitter e twist de laranja", price: 28.00 },
-                { id: 12, name: "NEGRONI", description: "Gin, vermute tinto e Campari", price: 26.00 }
-            ]
-        };
-    }
-
-    // Método utilitário para mostrar notificações
-    showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        
-        document.body.appendChild(notification);
-        
+        // Debug: Verificar se elementos existem
         setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
+            this.debugElements();
+        }, 1000);
         
-        setTimeout(() => {
-            notification.style.transform = 'translateX(400px)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    document.body.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
+        this.waitForFirebase().then(() => {
+            console.log('✅ Aplicação inicializada com sucesso!');
+        }).catch(error => {
+            console.error('❌ Erro ao inicializar aplicação:', error);
+        });
     }
 
-    // Método para formatar preços
-    formatPrice(price) {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(price);
+    debugElements() {
+        console.log('🔍 DEBUG - Verificando elementos no DOM:');
+        console.log('📍 checkout-btn:', document.getElementById('checkout-btn'));
+        console.log('📍 cart-items:', document.getElementById('cart-items'));
+        console.log('📍 address-modal:', document.getElementById('address-modal'));
+        
+        // Verificar se há itens no carrinho
+        const cart = localStorage.getItem('garagem67_cart');
+        console.log('🛒 Carrinho no localStorage:', cart);
+        
+        // Verificar usuário logado
+        const user = firebase.auth().currentUser;
+        console.log('👤 Usuário Firebase:', user);
+    }
+
+    waitForFirebase() {
+        return new Promise((resolve) => {
+            const checkFirebase = () => {
+                if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                    resolve();
+                } else {
+                    setTimeout(checkFirebase, 100);
+                }
+            };
+            checkFirebase();
+        });
     }
 }
 
-// Inicializar aplicação quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = new Garagem67App();
+// Inicializar aplicação
+document.addEventListener('DOMContentLoaded', function() {
+    window.app = new App();
 });
