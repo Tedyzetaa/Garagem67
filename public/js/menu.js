@@ -1,4 +1,4 @@
-// menu.js - Sistema de cardápio interativo
+// menu.js - Sistema de cardápio interativo - VERSÃO CORRIGIDA
 class MenuManager {
     constructor() {
         this.categories = {
@@ -176,7 +176,10 @@ class MenuManager {
 
     loadMenu(category) {
         const container = document.getElementById('menu-items-container');
-        if (!container) return;
+        if (!container) {
+            console.error('❌ Container do menu não encontrado!');
+            return;
+        }
 
         const items = this.categories[category] || [];
         
@@ -190,7 +193,7 @@ class MenuManager {
             return `
                 <div class="menu-item" data-id="${item.id}">
                     <div class="item-image">
-                        <img src="/img/${item.image}" alt="${item.name}" loading="lazy">
+                        <img src="/img/${item.image}" alt="${item.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/140x140/2a2a2a/d4af37?text=🍺'">
                     </div>
                     <div class="item-content">
                         <div class="item-info">
@@ -200,12 +203,12 @@ class MenuManager {
                         </div>
                         <div class="item-controls">
                             <div class="quantity-controls">
-                                <button class="qty-btn minus" onclick="menuManager.decreaseQuantity('${item.id}')">-</button>
+                                <button class="qty-btn minus" onclick="window.menuManager.decreaseQuantity('${item.id}')">-</button>
                                 <span class="quantity">${quantity}</span>
-                                <button class="qty-btn plus" onclick="menuManager.increaseQuantity('${item.id}')">+</button>
+                                <button class="qty-btn plus" onclick="window.menuManager.increaseQuantity('${item.id}')">+</button>
                             </div>
                             <button class="add-btn ${quantity > 0 ? 'active' : ''}" 
-                                    onclick="menuManager.addToCart('${item.id}')"
+                                    onclick="window.menuManager.addToCart('${item.id}')"
                                     ${quantity === 0 ? 'disabled' : ''}>
                                 ${quantity > 0 ? `Adicionar (${quantity})` : 'Adicionar'}
                             </button>
@@ -227,6 +230,8 @@ class MenuManager {
         if (currentQty < 10) {
             this.itemQuantities[itemId] = currentQty + 1;
             this.updateItemDisplay(itemId);
+        } else {
+            this.showNotification('Quantidade máxima é 10 unidades', 'warning');
         }
     }
 
@@ -264,11 +269,23 @@ class MenuManager {
     }
 
     addToCart(itemId) {
+        console.log('🎯 addToCart chamado para item:', itemId);
+        
         const item = this.findItemById(itemId);
         const quantity = this.getItemQuantity(itemId);
 
-        if (!item || quantity === 0) {
-            console.log('❌ Nenhuma quantidade selecionada para:', item?.name);
+        console.log('📊 Item encontrado:', item);
+        console.log('🔢 Quantidade selecionada:', quantity);
+
+        if (!item) {
+            console.log('❌ Item não encontrado:', itemId);
+            this.showNotification('Erro: Item não encontrado', 'error');
+            return;
+        }
+
+        if (quantity === 0) {
+            console.log('❌ Nenhuma quantidade selecionada para:', item.name);
+            this.showNotification('Selecione uma quantidade antes de adicionar ao carrinho', 'warning');
             return;
         }
 
@@ -281,9 +298,11 @@ class MenuManager {
                 name: item.name,
                 price: item.price,
                 quantity: quantity,
-                image: item.image // Mantemos a imagem apenas para referência, não será usada no carrinho
+                image: item.image
             }
         });
+        
+        console.log('📤 Disparando evento addToCart:', addToCartEvent.detail);
         document.dispatchEvent(addToCartEvent);
 
         // Resetar quantidade após adicionar
@@ -327,9 +346,76 @@ class MenuManager {
             }, 300);
         }, 2000);
     }
+
+    showNotification(message, type = 'info') {
+        // Criar notificação
+        const notification = document.createElement('div');
+        notification.className = `menu-notification ${type}`;
+        notification.innerHTML = `
+            <span>${message}</span>
+        `;
+        
+        // Adicionar estilos se não existirem
+        if (!document.querySelector('#menu-notification-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'menu-notification-styles';
+            styles.textContent = `
+                .menu-notification {
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    z-index: 10000;
+                    transform: translateX(400px);
+                    transition: transform 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    max-width: 300px;
+                }
+                .menu-notification.success {
+                    background: #27ae60;
+                    color: white;
+                }
+                .menu-notification.warning {
+                    background: #f39c12;
+                    color: white;
+                }
+                .menu-notification.info {
+                    background: #3498db;
+                    color: white;
+                }
+                .menu-notification.error {
+                    background: #e74c3c;
+                    color: white;
+                }
+                .menu-notification.show {
+                    transform: translateX(0);
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        document.body.appendChild(notification);
+        
+        // Animação de entrada
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        // Remover após 3 segundos
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
 }
 
-// CSS para o menu
+// CSS para o menu - APENAS UMA VEZ
 const menuStyles = `
 .menu-item {
     background: #2a2a2a;
@@ -540,13 +626,16 @@ const menuStyles = `
 }
 `;
 
-// Adicionar estilos ao documento
-const styleSheet = document.createElement('style');
-styleSheet.textContent = menuStyles;
-document.head.appendChild(styleSheet);
+// Adicionar estilos ao documento - APENAS UMA VEZ
+if (!document.querySelector('#menu-styles')) {
+    const styleSheet = document.createElement('style');
+    styleSheet.id = 'menu-styles';
+    styleSheet.textContent = menuStyles;
+    document.head.appendChild(styleSheet);
+}
 
 // Inicialização quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando MenuManager...');
     window.menuManager = new MenuManager();
-    console.log('📋 Sistema de menu inicializado');
 });

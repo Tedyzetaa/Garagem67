@@ -1,4 +1,4 @@
-// cart.js - Sistema completo de carrinho de compras
+// cart.js - Sistema completo de carrinho de compras - VERSÃO CORRIGIDA
 class CartManager {
     constructor() {
         this.cart = [];
@@ -17,7 +17,10 @@ class CartManager {
             const savedCart = localStorage.getItem('garagem67_cart');
             if (savedCart) {
                 this.cart = JSON.parse(savedCart);
-                console.log('📦 Carrinho carregado:', this.cart);
+                console.log('📦 Carrinho carregado:', this.cart.length, 'itens');
+            } else {
+                this.cart = [];
+                console.log('🆕 Carrinho vazio - inicializando');
             }
         } catch (error) {
             console.error('❌ Erro ao carregar carrinho:', error);
@@ -28,30 +31,39 @@ class CartManager {
     saveCart() {
         try {
             localStorage.setItem('garagem67_cart', JSON.stringify(this.cart));
+            console.log('💾 Carrinho salvo:', this.cart.length, 'itens');
         } catch (error) {
             console.error('❌ Erro ao salvar carrinho:', error);
         }
     }
 
     setupEventListeners() {
-        console.log('🔧 Configurando event listeners...');
+        console.log('🔧 Configurando event listeners do carrinho...');
         
-        // Eventos personalizados para adicionar itens
+        // Evento personalizado para adicionar itens (do menu)
         document.addEventListener('addToCart', (event) => {
             console.log('🎯 Evento addToCart recebido:', event.detail);
             this.addItem(event.detail);
         });
 
-        // Botão finalizar pedido
+        // Botão finalizar pedido - VERIFICAÇÃO MAIS ROBUSTA
         const checkoutBtn = document.getElementById('checkout-btn');
         if (checkoutBtn) {
-            console.log('✅ Botão checkout-btn encontrado, adicionando listener...');
+            console.log('✅ Botão checkout-btn encontrado');
             checkoutBtn.addEventListener('click', () => {
                 console.log('🎯🎯🎯 BOTÃO FINALIZAR PEDIDO CLICADO!');
                 this.handleCheckout();
             });
         } else {
-            console.warn('⚠️ Botão checkout-btn não encontrado');
+            console.error('❌ Botão checkout-btn NÃO encontrado no DOM');
+            // Tenta encontrar novamente após um delay
+            setTimeout(() => {
+                const retryBtn = document.getElementById('checkout-btn');
+                if (retryBtn) {
+                    console.log('✅ Botão checkout-btn encontrado no retry');
+                    retryBtn.addEventListener('click', () => this.handleCheckout());
+                }
+            }, 1000);
         }
 
         // Botão limpar carrinho
@@ -61,22 +73,50 @@ class CartManager {
                 this.clearCart();
             });
         }
+
+        // Fechar modal de endereço
+        const closeModal = document.querySelector('#address-modal .close');
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                document.getElementById('address-modal').style.display = 'none';
+            });
+        }
+
+        console.log('✅ Event listeners do carrinho configurados');
     }
 
     addItem(item) {
-        const existingItem = this.cart.find(cartItem => cartItem.id === item.id);
+        console.log('➕ Adicionando item ao carrinho:', item);
         
-        if (existingItem) {
-            if (existingItem.quantity < 10) {
-                existingItem.quantity += item.quantity;
-                console.log(`📈 ${item.name} quantidade atualizada para: ${existingItem.quantity}`);
+        // Verificar se o item já existe no carrinho
+        const existingItemIndex = this.cart.findIndex(cartItem => cartItem.id === item.id);
+        
+        if (existingItemIndex > -1) {
+            // Item existe - atualizar quantidade
+            const newQuantity = this.cart[existingItemIndex].quantity + item.quantity;
+            if (newQuantity <= 10) {
+                this.cart[existingItemIndex].quantity = newQuantity;
+                console.log(`📈 ${item.name} quantidade atualizada para: ${newQuantity}`);
             } else {
-                console.log(`⚠️ Limite máximo atingido para ${item.name}`);
+                console.log(`⚠️ Limite máximo (10) atingido para ${item.name}`);
+                this.showNotification(`Limite máximo de 10 unidades atingido para ${item.name}`, 'warning');
                 return;
             }
         } else {
-            this.cart.push({...item});
-            console.log(`📢 ${item.name} (${item.quantity}x) adicionado ao carrinho!`);
+            // Novo item - adicionar ao carrinho
+            if (item.quantity <= 10) {
+                this.cart.push({
+                    id: item.id,
+                    name: item.name,
+                    price: parseFloat(item.price),
+                    quantity: parseInt(item.quantity),
+                    image: item.image
+                });
+                console.log(`📢 ${item.name} (${item.quantity}x) adicionado ao carrinho!`);
+            } else {
+                console.log(`⚠️ Quantidade inicial muito alta para ${item.name}`);
+                return;
+            }
         }
         
         this.saveCart();
@@ -85,12 +125,15 @@ class CartManager {
     }
 
     removeItem(itemId) {
+        console.log('🗑️ Removendo item:', itemId);
         this.cart = this.cart.filter(item => item.id !== itemId);
         this.saveCart();
         this.updateCartDisplay();
     }
 
     updateQuantity(itemId, newQuantity) {
+        console.log('🔄 Atualizando quantidade:', itemId, 'para', newQuantity);
+        
         if (newQuantity < 1) {
             this.removeItem(itemId);
             return;
@@ -98,6 +141,7 @@ class CartManager {
         
         if (newQuantity > 10) {
             newQuantity = 10;
+            this.showNotification('Quantidade máxima é 10 unidades por item', 'warning');
         }
         
         const item = this.cart.find(item => item.id === itemId);
@@ -110,6 +154,7 @@ class CartManager {
 
     clearCart() {
         if (this.cart.length === 0) {
+            this.showNotification('Carrinho já está vazio', 'info');
             return;
         }
 
@@ -117,6 +162,7 @@ class CartManager {
             this.cart = [];
             this.saveCart();
             this.updateCartDisplay();
+            this.showNotification('Carrinho limpo com sucesso!', 'success');
             console.log('🗑️ Carrinho limpo!');
         }
     }
@@ -134,18 +180,27 @@ class CartManager {
         const cartTotalElement = document.getElementById('cart-total');
         const checkoutBtn = document.getElementById('checkout-btn');
 
-        if (!cartItemsElement) return;
+        if (!cartItemsElement) {
+            console.error('❌ Elemento cart-items não encontrado');
+            return;
+        }
+
+        console.log('🔄 Atualizando display do carrinho:', this.cart.length, 'itens');
 
         if (this.cart.length === 0) {
-            cartItemsElement.innerHTML = '<div class="empty-cart-message">Nenhum item adicionado ao carrinho</div>';
+            cartItemsElement.innerHTML = '<div class="empty-cart-message">🛒 Nenhum item adicionado ao carrinho</div>';
             if (cartTotalElement) cartTotalElement.textContent = 'R$ 0,00';
-            if (checkoutBtn) checkoutBtn.disabled = true;
+            if (checkoutBtn) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.textContent = 'Finalizar Pedido';
+            }
             return;
         }
 
         // Habilitar botão de checkout
         if (checkoutBtn) {
             checkoutBtn.disabled = false;
+            checkoutBtn.textContent = `Finalizar Pedido (${this.getTotalItems()} itens)`;
         }
 
         // Atualizar total
@@ -158,29 +213,79 @@ class CartManager {
             <div class="cart-item" data-id="${item.id}">
                 <div class="cart-item-info">
                     <h4>${item.name}</h4>
-                    <p class="cart-item-price">R$ ${item.price.toFixed(2)}</p>
+                    <p class="cart-item-price">R$ ${item.price.toFixed(2)} cada</p>
                 </div>
                 <div class="cart-item-controls">
-                    <button class="quantity-btn" onclick="cartManager.updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
+                    <button class="quantity-btn minus" onclick="window.cartManager.updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
                     <span class="quantity-display">${item.quantity}</span>
-                    <button class="quantity-btn" onclick="cartManager.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
-                    <button class="remove-btn" onclick="cartManager.removeItem('${item.id}')">×</button>
+                    <button class="quantity-btn plus" onclick="window.cartManager.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                    <button class="remove-btn" onclick="window.cartManager.removeItem('${item.id}')">×</button>
+                </div>
+                <div class="cart-item-total">
+                    Total: R$ ${(item.price * item.quantity).toFixed(2)}
                 </div>
             </div>
         `).join('');
+
+        console.log('✅ Display do carrinho atualizado');
     }
 
     showAddToCartNotification(itemName, quantity) {
-        // Criar notificação visual
+        this.showNotification(`✅ ${quantity}x ${itemName} adicionado ao carrinho!`, 'success');
+    }
+
+    showNotification(message, type = 'info') {
+        // Criar notificação
         const notification = document.createElement('div');
-        notification.className = 'add-to-cart-notification';
+        notification.className = `cart-notification ${type}`;
         notification.innerHTML = `
-            <span>✅ ${quantity}x ${itemName} adicionado ao carrinho!</span>
+            <span>${message}</span>
         `;
+        
+        // Adicionar estilos se não existirem
+        if (!document.querySelector('#cart-notification-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'cart-notification-styles';
+            styles.textContent = `
+                .cart-notification {
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    z-index: 10000;
+                    transform: translateX(400px);
+                    transition: transform 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    max-width: 300px;
+                }
+                .cart-notification.success {
+                    background: #27ae60;
+                    color: white;
+                }
+                .cart-notification.warning {
+                    background: #f39c12;
+                    color: white;
+                }
+                .cart-notification.info {
+                    background: #3498db;
+                    color: white;
+                }
+                .cart-notification.error {
+                    background: #e74c3c;
+                    color: white;
+                }
+                .cart-notification.show {
+                    transform: translateX(0);
+                }
+            `;
+            document.head.appendChild(styles);
+        }
         
         document.body.appendChild(notification);
         
-        // Animação
+        // Animação de entrada
         setTimeout(() => {
             notification.classList.add('show');
         }, 100);
@@ -201,7 +306,7 @@ class CartManager {
         
         // Verificar se há itens no carrinho
         if (this.cart.length === 0) {
-            alert('🛒 Seu carrinho está vazio! Adicione itens antes de finalizar o pedido.');
+            this.showNotification('🛒 Seu carrinho está vazio! Adicione itens antes de finalizar o pedido.', 'warning');
             return;
         }
 
@@ -209,7 +314,7 @@ class CartManager {
         
         // Verificar se usuário está logado
         const user = firebase.auth().currentUser;
-        console.log('👤 Status do usuário:', user ? 'Logado' : 'Não logado');
+        console.log('👤 Status do usuário:', user ? `Logado (${user.email})` : 'Não logado');
         
         if (!user) {
             console.log('🔐 Usuário não logado, abrindo modal de login...');
@@ -249,11 +354,13 @@ class CartManager {
     openAddressModal() {
         const addressModal = document.getElementById('address-modal');
         if (addressModal) {
+            console.log('📋 Abrindo modal de endereço...');
             addressModal.style.display = 'block';
             
             // Preencher com dados existentes se disponíveis
             const userData = this.getUserData();
             if (userData) {
+                console.log('📝 Preenchendo formulário com dados existentes');
                 if (userData.nome) document.getElementById('address-nome').value = userData.nome;
                 if (userData.telefone) document.getElementById('address-telefone').value = userData.telefone;
                 if (userData.endereco) document.getElementById('address-endereco').value = userData.endereco;
@@ -261,6 +368,8 @@ class CartManager {
                 if (userData.cep) document.getElementById('address-cep').value = userData.cep;
                 if (userData.complemento) document.getElementById('address-complemento').value = userData.complemento;
             }
+        } else {
+            console.error('❌ Modal de endereço não encontrado');
         }
     }
 
@@ -277,6 +386,7 @@ class CartManager {
     saveUserData(userData) {
         try {
             localStorage.setItem('garagem67_user_data', JSON.stringify(userData));
+            console.log('💾 Dados do usuário salvos:', userData);
         } catch (error) {
             console.error('❌ Erro ao salvar dados do usuário:', error);
         }
@@ -306,16 +416,16 @@ class CartManager {
 
     formatOrderItems() {
         return this.cart.map(item => 
-            `• ${item.quantity}x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}`
+            `${item.quantity}x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}`
         ).join('\n');
     }
 
     openWhatsApp(orderData) {
         try {
             const message = `🛒 *PEDIDO - GARAGEM 67*\n\n` +
-                           `*Cliente:* ${orderData.userName || 'Não informado'}\n` +
-                           `*Telefone:* ${orderData.userPhone || 'Não informado'}\n` +
-                           `*Endereço:* ${orderData.userAddress || 'Não informado'}\n\n` +
+                           `*Cliente:* ${orderData.userName}\n` +
+                           `*Telefone:* ${orderData.userPhone}\n` +
+                           `*Endereço:* ${orderData.userAddress}\n\n` +
                            `*Itens do Pedido:*\n${orderData.items}\n\n` +
                            `*Total: R$ ${orderData.total}*\n\n` +
                            `_Pedido gerado via site Garagem 67_`;
@@ -323,16 +433,20 @@ class CartManager {
             const whatsappNumber = window.appConfig?.whatsappNumber || '5567998668032';
             const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
             
+            console.log('📤 Abrindo WhatsApp...', whatsappUrl);
             window.open(whatsappUrl, '_blank');
+            
+            this.showNotification('✅ Pedido enviado para WhatsApp!', 'success');
             
         } catch (error) {
             console.error('❌ Erro ao abrir WhatsApp:', error);
-            alert('Erro ao abrir WhatsApp. Por favor, copie o pedido e envie manualmente.');
+            this.showNotification('❌ Erro ao abrir WhatsApp. Copie o pedido e envie manualmente.', 'error');
         }
     }
 
     handleAddressSubmit(event) {
         event.preventDefault();
+        console.log('📝 Enviando formulário de endereço...');
         
         // Coletar dados do formulário
         const userData = {
@@ -345,9 +459,11 @@ class CartManager {
             complemento: document.getElementById('address-complemento').value
         };
 
+        console.log('📦 Dados coletados:', userData);
+
         // Validar dados obrigatórios
         if (!userData.nome || !userData.telefone || !userData.endereco) {
-            alert('Por favor, preencha todos os campos obrigatórios (Nome, Telefone e Endereço).');
+            this.showNotification('❌ Preencha todos os campos obrigatórios (Nome, Telefone e Endereço).', 'error');
             return;
         }
 
@@ -367,195 +483,17 @@ class CartManager {
 
 // Inicialização quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando CartManager...');
     window.cartManager = new CartManager();
     
     // Configurar submit do formulário de endereço
     const addressForm = document.getElementById('address-form');
     if (addressForm) {
+        console.log('✅ Formulário de endereço encontrado, adicionando listener...');
         addressForm.addEventListener('submit', function(event) {
             window.cartManager.handleAddressSubmit(event);
         });
+    } else {
+        console.error('❌ Formulário de endereço não encontrado');
     }
 });
-
-// CSS para notificações
-(function() {
-    const cartStyles = `
-    .add-to-cart-notification {
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: #d4af37;
-        color: #1a1a1a;
-        padding: 15px 20px;
-        border-radius: 8px;
-        font-weight: bold;
-        z-index: 10000;
-        transform: translateX(400px);
-        transition: transform 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    .add-to-cart-notification.show {
-        transform: translateX(0);
-    }
-    `;
-
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = cartStyles;
-    document.head.appendChild(styleSheet);
-})();
-
-// cart.js - Adicionar esta classe
-class ExternalOrderService {
-  constructor() {
-    this.apiUrl = 'https://entregador67-production.up.railway.app/api/external/orders';
-  }
-
-  async sendOrderToDeliverySystem(orderData) {
-    try {
-      console.log('📤 Enviando pedido para sistema de entregas...', orderData);
-
-      const response = await fetch(this.apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        console.log('✅ Pedido enviado para entregadores! ID:', result.internal_id);
-        return {
-          success: true,
-          deliveryId: result.internal_id,
-          message: 'Pedido enviado para entregadores com sucesso!'
-        };
-      } else {
-        console.warn('⚠️ Pedido não enviado para entregadores:', result.message);
-        return {
-          success: false,
-          message: result.message
-        };
-      }
-
-    } catch (error) {
-      console.error('❌ Erro ao enviar para entregadores:', error);
-      return {
-        success: false,
-        message: 'Erro de conexão com sistema de entregas'
-      };
-    }
-  }
-
-  async checkOrderStatus(orderId) {
-    try {
-      const response = await fetch(`${this.apiUrl}/${orderId}`);
-      const result = await response.json();
-      
-      return result.success ? result.order : null;
-    } catch (error) {
-      console.error('❌ Erro ao verificar status:', error);
-      return null;
-    }
-  }
-}
-
-// Modificar o método finalizeOrder no CartManager
-async finalizeOrder(userData) {
-  console.log('✅ Finalizando pedido...', userData);
-  
-  // Preparar dados para ambos os sistemas
-  const orderData = {
-    userName: userData.nome,
-    userPhone: userData.telefone,
-    userAddress: `${userData.endereco}, ${userData.cidade} - ${userData.estado}${userData.complemento ? ` (${userData.complemento})` : ''}`,
-    items: this.formatOrderItems(),
-    total: this.getTotal().toFixed(2),
-    timestamp: new Date().toISOString()
-  };
-
-  // Preparar dados para sistema de entregas
-  const externalOrderData = {
-    external_id: `garagem67_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    store_name: "Garagem 67 Bar e Conveniência",
-    store_phone: "67998668032",
-    customer: {
-      name: userData.nome,
-      phone: userData.telefone,
-      address: `${userData.endereco}, ${userData.cidade} - ${userData.estado}`,
-      complement: userData.complemento || ''
-    },
-    items: this.cart.map(item => ({
-      name: item.name,
-      quantity: item.quantity,
-      price: item.price
-    })),
-    total: this.getTotal(),
-    description: this.formatOrderDescription(),
-    notes: 'Entregar com cuidado - Bebidas',
-    metadata: {
-      source: 'garagem67',
-      order_url: window.location.href
-    }
-  };
-
-  console.log('📦 Dados do pedido externo:', externalOrderData);
-
-  // ENVIAR PARA SISTEMA DE ENTREGAS (em paralelo)
-  const externalService = new ExternalOrderService();
-  const deliveryResult = await externalService.sendOrderToDeliverySystem(externalOrderData);
-
-  // Abrir WhatsApp (fluxo original)
-  this.openWhatsApp(orderData);
-  
-  // Mostrar confirmação do sistema de entregas
-  if (deliveryResult.success) {
-    this.showDeliveryConfirmation(deliveryResult.deliveryId);
-  }
-
-  // Limpar carrinho após pedido
-  this.clearCart();
-}
-
-// Adicionar método de confirmação de entrega
-showDeliveryConfirmation(deliveryId) {
-  const confirmation = `
-🎉 *PEDIDO CONFIRMADO NO SISTEMA!*
-
-📦 *Nº do Pedido:* ${deliveryId}
-🚚 *Status:* Aguardando entregador
-⏱️ *Previsão:* Em breve
-
-*Acompanhe pelo site:*
-https://entregador67.vercel.app
-
-_Obrigado pela preferência! 🍻_
-  `;
-  
-  // Criar elemento de confirmação
-  const confirmationEl = document.createElement('div');
-  confirmationEl.className = 'delivery-confirmation';
-  confirmationEl.innerHTML = `
-    <div class="confirmation-content">
-      <h3>✅ Pedido no Sistema de Entregas</h3>
-      <p><strong>Nº do Pedido:</strong> ${deliveryId}</p>
-      <p><strong>Status:</strong> Aguardando entregador</p>
-      <p><strong>Previsão:</strong> Em breve</p>
-      <button onclick="window.open('https://entregador67.vercel.app', '_blank')">
-        Acompanhar Entrega
-      </button>
-    </div>
-  `;
-  
-  document.body.appendChild(confirmationEl);
-  
-  // Mostrar e depois remover
-  setTimeout(() => confirmationEl.classList.add('show'), 100);
-  setTimeout(() => {
-    confirmationEl.classList.remove('show');
-    setTimeout(() => confirmationEl.remove(), 300);
-  }, 10000);
-}
