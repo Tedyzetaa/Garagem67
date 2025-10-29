@@ -1,4 +1,4 @@
-// menu.js - Sistema de menu para Garagem67
+// menu.js - Sistema de menu atualizado para Garagem67
 class MenuManager {
     constructor() {
         this.menuItems = [];
@@ -14,43 +14,59 @@ class MenuManager {
     }
 
     loadMenuItems() {
-        // Dados de exemplo do menu
+        // Dados atualizados do menu com bebidas reais
         this.menuItems = [
-            // Bebidas
+            // Bebidas - Atualizadas com produtos reais
             {
                 id: 'bebida-1',
-                name: 'Coca-Cola 2L',
+                name: 'Heineken Long Neck',
                 price: 12.00,
-                image: '/img/coca-cola.jpg',
+                image: '/img/heineken-longneck.jpg',
                 category: 'bebidas',
-                description: 'Refrigerante Coca-Cola 2 litros'
+                description: 'Cerveja Heineken 330ml'
             },
             {
                 id: 'bebida-2',
-                name: 'Guaraná Antarctica 2L',
+                name: 'Budweiser Long Neck',
                 price: 10.00,
-                image: '/img/guarana.jpg',
+                image: '/img/budweiser-longneck.jpg',
                 category: 'bebidas',
-                description: 'Refrigerante Guaraná Antarctica 2 litros'
+                description: 'Cerveja Budweiser 330ml'
             },
             {
                 id: 'bebida-3',
-                name: 'Água Mineral 500ml',
-                price: 3.00,
-                image: '/img/agua.jpg',
+                name: 'Corona Extra',
+                price: 15.90,
+                image: '/img/corona-extra.jpg',
                 category: 'bebidas',
-                description: 'Água mineral sem gás 500ml'
+                description: 'Cerveja Corona Extra 330ml'
             },
             {
                 id: 'bebida-4',
-                name: 'Suco de Laranja 1L',
-                price: 8.00,
-                image: '/img/suco-laranja.jpg',
+                name: 'Becks',
+                price: 14.90,
+                image: '/img/becks.jpg',
                 category: 'bebidas',
-                description: 'Suco natural de laranja 1 litro'
+                description: 'Cerveja Becks 330ml'
+            },
+            {
+                id: 'bebida-5',
+                name: 'Spaten',
+                price: 13.90,
+                image: '/img/spaten.jpg',
+                category: 'bebidas',
+                description: 'Cerveja Spaten 330ml'
+            },
+            {
+                id: 'bebida-6',
+                name: 'Stella Artois',
+                price: 14.90,
+                image: '/img/stella-artois.jpg',
+                category: 'bebidas',
+                description: 'Cerveja Stella Artois 330ml'
             },
 
-            // Comidas
+            // Comidas (mantidas como exemplo)
             {
                 id: 'comida-1',
                 name: 'Batata Frita',
@@ -67,24 +83,8 @@ class MenuManager {
                 category: 'comidas',
                 description: 'Hambúrguer com queijo, alface e tomate'
             },
-            {
-                id: 'comida-3',
-                name: 'Pizza Calabresa',
-                price: 45.00,
-                image: '/img/pizza-calabresa.jpg',
-                category: 'comidas',
-                description: 'Pizza de calabresa com mussarela'
-            },
-            {
-                id: 'comida-4',
-                name: 'Esfiha de Carne',
-                price: 5.00,
-                image: '/img/esfiha.jpg',
-                category: 'comidas',
-                description: 'Esfiha aberta de carne'
-            },
 
-            // Drinks
+            // Drinks (mantidos como exemplo)
             {
                 id: 'drink-1',
                 name: 'Caipirinha',
@@ -100,22 +100,6 @@ class MenuManager {
                 image: '/img/mojito.jpg',
                 category: 'drinks',
                 description: 'Mojito com hortelã e limão'
-            },
-            {
-                id: 'drink-3',
-                name: 'Sex on the Beach',
-                price: 25.00,
-                image: '/img/sex-beach.jpg',
-                category: 'drinks',
-                description: 'Drink com vodka e sucos tropicais'
-            },
-            {
-                id: 'drink-4',
-                name: 'Margarita',
-                price: 20.00,
-                image: '/img/margarita.jpg',
-                category: 'drinks',
-                description: 'Margarita clássica com tequila'
             }
         ];
 
@@ -158,6 +142,16 @@ class MenuManager {
         const filteredItems = this.menuItems.filter(item => item.category === this.currentCategory);
         
         console.log(`🎨 Renderizando ${filteredItems.length} itens da categoria ${this.currentCategory}`);
+
+        if (filteredItems.length === 0) {
+            container.innerHTML = `
+                <div class="empty-category-message">
+                    <p>🎯 Em breve nesta categoria!</p>
+                    <p>Estamos preparando novidades incríveis para você.</p>
+                </div>
+            `;
+            return;
+        }
 
         container.innerHTML = filteredItems.map(item => `
             <div class="menu-item" data-id="${item.id}">

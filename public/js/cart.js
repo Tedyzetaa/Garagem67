@@ -1,4 +1,4 @@
-// cart.js - Sistema completo de carrinho de compras com integração ao Entregadores67
+// cart.js - Sistema completo de carrinho com geração de JSON
 class ExternalOrderService {
   constructor() {
     this.apiUrl = 'https://entregador67-production.up.railway.app/api/external/orders';
@@ -444,28 +444,111 @@ class CartManager {
         }
     }
 
+    generateOrderJSON(userData) {
+        const orderData = {
+            order_id: `G67_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            timestamp: new Date().toISOString(),
+            status: 'pending',
+            customer: {
+                name: userData.nome,
+                phone: userData.telefone,
+                email: userData.email || '',
+                address: {
+                    street: userData.endereco,
+                    city: userData.cidade,
+                    state: userData.estado,
+                    zip_code: userData.cep,
+                    complement: userData.complemento || ''
+                }
+            },
+            items: this.cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                subtotal: item.price * item.quantity
+            })),
+            totals: {
+                subtotal: this.getTotal(),
+                delivery_fee: 0,
+                total: this.getTotal()
+            },
+            payment_method: 'not_specified',
+            notes: 'Pedido via site Garagem 67',
+            metadata: {
+                source: 'website',
+                version: '1.4.0',
+                user_agent: navigator.userAgent
+            }
+        };
+
+        return orderData;
+    }
+
+    saveOrderToJSON(orderData) {
+        try {
+            // Salvar no localStorage para histórico
+            const orders = JSON.parse(localStorage.getItem('garagem67_orders') || '[]');
+            orders.unshift(orderData);
+            localStorage.setItem('garagem67_orders', JSON.stringify(orders));
+            
+            // Criar arquivo JSON para download/backend
+            const jsonBlob = new Blob([JSON.stringify(orderData, null, 2)], { 
+                type: 'application/json' 
+            });
+            
+            // Salvar como arquivo (para futura integração com backend)
+            const url = URL.createObjectURL(jsonBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pedido_${orderData.order_id}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            console.log('📁 Arquivo JSON do pedido gerado:', orderData.order_id);
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Erro ao salvar pedido como JSON:', error);
+            return false;
+        }
+    }
+
     async finalizeOrder(userData) {
         console.log('✅ Finalizando pedido...', userData);
         
-        // ⭐ VALIDAÇÃO MELHORADA
+        // VALIDAÇÃO MELHORADA
         if (!this.cart || this.cart.length === 0) {
             this.showNotification('❌ Carrinho vazio!', 'error');
             return;
         }
 
+        // Gerar dados do pedido para JSON
+        const orderData = this.generateOrderJSON(userData);
+        
+        // Salvar pedido como JSON
+        const jsonSaved = this.saveOrderToJSON(orderData);
+        
+        if (!jsonSaved) {
+            this.showNotification('⚠️ Pedido realizado, mas houve problema ao gerar arquivo.', 'warning');
+        }
+
         // Preparar dados para WhatsApp (fluxo original)
-        const orderData = {
+        const whatsappData = {
             userName: userData.nome,
             userPhone: userData.telefone,
             userAddress: `${userData.endereco}, ${userData.cidade} - ${userData.estado}${userData.complemento ? ` (${userData.complemento})` : ''}`,
             items: this.formatOrderItems(),
             total: this.getTotal().toFixed(2),
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            orderId: orderData.order_id
         };
 
         // Preparar dados para sistema de entregas
         const externalOrderData = {
-            external_id: `garagem67_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            external_id: orderData.order_id,
             store_name: "Garagem 67 Bar e Conveniência",
             store_phone: "67998668032",
             customer: {
@@ -495,16 +578,16 @@ class CartManager {
         console.log('📦 Dados do pedido para entregadores:', externalOrderData);
 
         try {
-            // ⭐ TENTAR ENVIAR PARA SISTEMA DE ENTREGAS PRIMEIRO
+            // TENTAR ENVIAR PARA SISTEMA DE ENTREGAS PRIMEIRO
             const externalService = new ExternalOrderService();
             const deliveryResult = await externalService.sendOrderToDeliverySystem(externalOrderData);
 
-            // ⭐ SEMPRE ABRIR WHATSAPP (FLUXO PRINCIPAL)
-            this.openWhatsApp(orderData);
+            // SEMPRE ABRIR WHATSAPP (FLUXO PRINCIPAL)
+            this.openWhatsApp(whatsappData);
             
-            // ⭐ MOSTRAR CONFIRMAÇÃO APROPRIADA
+            // MOSTRAR CONFIRMAÇÃO APROPRIADA
             if (deliveryResult.success) {
-                this.showDeliveryConfirmation(deliveryResult);
+                this.showDeliveryConfirmation(deliveryResult, orderData.order_id);
             } else {
                 console.warn('⚠️ Pedido não enviado para entregadores, mas WhatsApp foi aberto');
                 this.showNotification('✅ Pedido enviado para WhatsApp! Sistema de entregas offline.', 'warning');
@@ -512,8 +595,8 @@ class CartManager {
 
         } catch (error) {
             console.error('❌ Erro no processo de entrega:', error);
-            // ⭐ EM CASO DE ERRO, APENAS ABRE WHATSAPP
-            this.openWhatsApp(orderData);
+            // EM CASO DE ERRO, APENAS ABRE WHATSAPP
+            this.openWhatsApp(whatsappData);
             this.showNotification('✅ Pedido enviado para WhatsApp!', 'success');
         }
 
@@ -536,6 +619,7 @@ class CartManager {
     openWhatsApp(orderData) {
         try {
             const message = `🛒 *PEDIDO - GARAGEM 67*\n\n` +
+                           `*Nº do Pedido:* ${orderData.orderId}\n` +
                            `*Cliente:* ${orderData.userName}\n` +
                            `*Telefone:* ${orderData.userPhone}\n` +
                            `*Endereço:* ${orderData.userAddress}\n\n` +
@@ -555,21 +639,22 @@ class CartManager {
         }
     }
 
-    showDeliveryConfirmation(deliveryResult) {
+    showDeliveryConfirmation(deliveryResult, orderId) {
         const confirmationEl = document.createElement('div');
         confirmationEl.className = 'delivery-confirmation';
         confirmationEl.innerHTML = `
             <div class="confirmation-content">
                 <div class="confirmation-header">
-                    <h3>✅ PEDIDO NO SISTEMA DE ENTREGAS</h3>
+                    <h3>✅ PEDIDO CONFIRMADO!</h3>
                     <span class="close-confirmation">&times;</span>
                 </div>
                 <div class="confirmation-body">
                     <div class="delivery-info">
-                        <p><strong>📦 Nº do Pedido:</strong> ${deliveryResult.deliveryId}</p>
-                        <p><strong>🚚 Status:</strong> <span class="status-pendente">Aguardando entregador</span></p>
+                        <p><strong>📦 Nº do Pedido:</strong> ${orderId}</p>
+                        <p><strong>🚚 ID Entrega:</strong> ${deliveryResult.deliveryId}</p>
+                        <p><strong>📊 Status:</strong> <span class="status-pendente">Aguardando entregador</span></p>
                         <p><strong>⏱️ Previsão:</strong> Em breve</p>
-                        <p><strong>📍 Rastreamento:</strong> Disponível para entregadores</p>
+                        <p><strong>📁 Arquivo:</strong> JSON gerado com sucesso</p>
                     </div>
                     <div class="confirmation-actions">
                         <button class="btn-track" onclick="window.open('https://entregador67.vercel.app', '_blank')">
