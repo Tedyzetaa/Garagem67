@@ -66,6 +66,28 @@ class OrderService {
         }
     }
 
+    // Adicionar ao OrderService existente
+async submitOrderWithFirebase(cartItems, total) {
+    try {
+        // 1. Salvar dados no Firestore
+        const customerData = this.getUserData();
+        if (window.firebaseCustomers && customerData) {
+            const saveResult = await window.firebaseCustomers.saveCustomer(customerData);
+            if (!saveResult.success) {
+                console.warn('⚠️ Não foi possível salvar no Firestore, continuando com WhatsApp...');
+            }
+        }
+
+        // 2. Continuar com o envio para WhatsApp (código existente)
+        this.sendOrderToWhatsApp(cartItems, total);
+
+    } catch (error) {
+        console.error('❌ Erro no processo de pedido:', error);
+        // Fallback: enviar apenas para WhatsApp
+        this.sendOrderToWhatsApp(cartItems, total);
+    }
+}
+
     sendOrderToWhatsApp() {
         const cartItems = window.cartService?.getCartItems() || [];
         const total = window.cartService?.getTotal() || 0;
