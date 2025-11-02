@@ -1,4 +1,4 @@
-// OrderService - Gerenciador de Pedidos com Configuração Centralizada
+// garagem67/js/order.js - OrderService ATUALIZADO com Firestore
 class OrderService {
     constructor() {
         this.userData = null;
@@ -7,7 +7,35 @@ class OrderService {
 
     init() {
         this.loadUserData();
-        console.log('📦 OrderService inicializado');
+        this.setupAddressForm();
+        console.log('📦 OrderService inicializado com Firestore');
+    }
+
+    setupAddressForm() {
+        const addressForm = document.getElementById('address-form');
+        if (addressForm) {
+            addressForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleAddressFormSubmit();
+            });
+        }
+
+        // 🆕 Preencher formulário quando modal abrir
+        const addressModal = document.getElementById('address-modal');
+        if (addressModal) {
+            // Observar quando modal é aberto
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                        if (addressModal.style.display === 'block') {
+                            this.fillAddressFormWithExistingData();
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(addressModal, { attributes: true });
+        }
     }
 
     loadUserData() {
@@ -32,12 +60,14 @@ class OrderService {
         }
     }
 
-    fillAddressForm() {
+    // 🆕 Preencher formulário com dados existentes
+    fillAddressFormWithExistingData() {
         if (!this.userData) return;
         
         const fields = {
             'address-nome': 'nome',
-            'address-telefone': 'telefone', 
+            'address-telefone': 'telefone',
+            'address-cpf': 'cpf', // ⭐ NOVO CAMPO
             'address-endereco': 'endereco',
             'address-cidade': 'cidade',
             'address-estado': 'estado',
@@ -53,6 +83,97 @@ class OrderService {
         }
     }
 
+    // 🆕 Manipular envio do formulário de endereço
+    async handleAddressFormSubmit() {
+        try {
+            // 1. Coletar dados do formulário
+            const formData = this.collectFormData();
+            if (!formData) return;
+
+            // 2. Validar dados
+            if (!this.validateFormData(formData)) return;
+
+            // 3. Salvar dados do cliente
+            await this.saveCustomerData(formData);
+
+            // 4. Enviar pedido para WhatsApp
+            this.sendOrderToWhatsApp();
+
+            // 5. Fechar modal
+            this.closeAddressModal();
+
+        } catch (error) {
+            console.error('❌ Erro no processo de pedido:', error);
+            alert('Erro ao processar pedido. Tente novamente.');
+        }
+    }
+
+    // 🆕 Coletar dados do formulário
+    collectFormData() {
+        const formData = {
+            nome: document.getElementById('address-nome')?.value || '',
+            telefone: document.getElementById('address-telefone')?.value || '',
+            cpf: document.getElementById('address-cpf')?.value || '', // ⭐ NOVO CAMPO
+            endereco: document.getElementById('address-endereco')?.value || '',
+            cidade: document.getElementById('address-cidade')?.value || 'Ivinhema',
+            estado: document.getElementById('address-estado')?.value || 'MS',
+            cep: document.getElementById('address-cep')?.value || '',
+            complemento: document.getElementById('address-complemento')?.value || ''
+        };
+
+        return formData;
+    }
+
+    // 🆕 Validar dados do formulário
+    validateFormData(formData) {
+        const requiredFields = ['nome', 'telefone', 'cpf', 'endereco'];
+        const missingFields = requiredFields.filter(field => !formData[field] || formData[field].trim() === '');
+
+        if (missingFields.length > 0) {
+            alert('Por favor, preencha todos os campos obrigatórios: Nome, Telefone, CPF e Endereço.');
+            return false;
+        }
+
+        // Validar CPF básico (apenas se tem 11 dígitos)
+        const cpfDigits = formData.cpf.replace(/\D/g, '');
+        if (cpfDigits.length !== 11) {
+            alert('Por favor, insira um CPF válido com 11 dígitos.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // 🆕 Salvar dados do cliente
+    async saveCustomerData(formData) {
+        try {
+            // Salvar localmente
+            this.saveUserData(formData);
+
+            // 🆕 Salvar no Firestore (se disponível)
+            if (window.firebaseCustomers) {
+                const result = await window.firebaseCustomers.onAddressFormSubmit(formData);
+                if (result.success) {
+                    console.log('✅ Dados do cliente salvos com sucesso no Firestore');
+                } else {
+                    console.warn('⚠️ Dados salvos localmente, mas não no Firestore');
+                }
+            }
+
+        } catch (error) {
+            console.error('❌ Erro ao salvar dados do cliente:', error);
+            // Não impedir o pedido se falhar o Firestore
+        }
+    }
+
+    // 🆕 Fechar modal de endereço
+    closeAddressModal() {
+        const addressModal = document.getElementById('address-modal');
+        if (addressModal) {
+            addressModal.style.display = 'none';
+        }
+    }
+
     onUserLogin(user) {
         console.log('👤 Usuário logado no OrderService:', user.email);
         
@@ -65,28 +186,6 @@ class OrderService {
             this.saveUserData(userData);
         }
     }
-
-    // Adicionar ao OrderService existente
-async submitOrderWithFirebase(cartItems, total) {
-    try {
-        // 1. Salvar dados no Firestore
-        const customerData = this.getUserData();
-        if (window.firebaseCustomers && customerData) {
-            const saveResult = await window.firebaseCustomers.saveCustomer(customerData);
-            if (!saveResult.success) {
-                console.warn('⚠️ Não foi possível salvar no Firestore, continuando com WhatsApp...');
-            }
-        }
-
-        // 2. Continuar com o envio para WhatsApp (código existente)
-        this.sendOrderToWhatsApp(cartItems, total);
-
-    } catch (error) {
-        console.error('❌ Erro no processo de pedido:', error);
-        // Fallback: enviar apenas para WhatsApp
-        this.sendOrderToWhatsApp(cartItems, total);
-    }
-}
 
     sendOrderToWhatsApp() {
         const cartItems = window.cartService?.getCartItems() || [];
@@ -112,9 +211,13 @@ async submitOrderWithFirebase(cartItems, total) {
 
         // Formata mensagem para WhatsApp
         let message = `*🛵 NOVO PEDIDO - GARAGEM 67*%0A%0A`;
-        message += `*Cliente:* ${this.userData.nome}%0A`;
-        message += `*Telefone:* ${this.userData.telefone}%0A`;
-        message += `*Email:* ${this.userData.email || 'Não informado'}%0A%0A`;
+        
+        // Dados do cliente
+        message += `*👤 DADOS DO CLIENTE*%0A`;
+        message += `Nome: ${this.userData.nome}%0A`;
+        message += `Telefone: ${this.userData.telefone}%0A`;
+        message += `CPF: ${this.userData.cpf || 'Não informado'}%0A`;
+        message += `Email: ${this.userData.email || 'Não informado'}%0A%0A`;
         
         message += `*📍 ENDEREÇO DE ENTREGA*%0A`;
         message += `${this.userData.endereco}%0A`;
@@ -153,6 +256,7 @@ async submitOrderWithFirebase(cartItems, total) {
         return this.userData && 
                this.userData.nome && 
                this.userData.telefone && 
+               this.userData.cpf && // ⭐ AGORA INCLUI CPF
                this.userData.endereco;
     }
 }
@@ -160,5 +264,5 @@ async submitOrderWithFirebase(cartItems, total) {
 // Inicializar quando DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
     window.orderService = new OrderService();
-    console.log('📦 Serviço de pedidos inicializado');
+    console.log('📦 Serviço de pedidos inicializado com Firestore');
 });
