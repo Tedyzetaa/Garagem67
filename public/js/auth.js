@@ -1,4 +1,4 @@
-// auth.js - Sistema de autenticação com Firebase
+// garagem67/js/auth.js - Sistema de autenticação com Firebase ATUALIZADO
 class AuthService {
     constructor() {
         this.user = null;
@@ -33,13 +33,14 @@ class AuthService {
         const emailLoginForm = document.getElementById('email-login-form');
         const btnBack = document.getElementById('btn-back');
         const headerLoginBtn = document.getElementById('login-btn');
-            if (headerLoginBtn) {
+
+        if (headerLoginBtn) {
             headerLoginBtn.addEventListener('click', () => {
                 console.log('👆 Botão Entrar do header clicado');
                 loginModal.style.display = 'block';
                 this.resetLoginModal();
-         });
-    }
+            });
+        }
 
         // Fechar modal
         if (loginClose) {
@@ -135,62 +136,56 @@ class AuthService {
             this.showLoginError('Erro ao fazer login com Google: ' + error.message);
         }
     }
-// Adicionar esta função à classe AuthService
-async handleGoogleLoginSuccess(user) {
-    try {
-        // Salvar dados básicos do usuário
-        const userData = {
-            nome: user.displayName || user.email.split('@')[0],
-            email: user.email,
-            picture: user.photoURL || 'https://via.placeholder.com/40'
-        };
 
-        // Verificar se já tem dados completos salvos
-        const existingData = this.getUserData();
-        if (existingData && existingData.telefone && existingData.endereco) {
-            console.log('✅ Dados completos encontrados, mesclando...');
-            // Manter dados de endereço existentes
-            userData.telefone = existingData.telefone;
-            userData.endereco = existingData.endereco;
-            userData.cidade = existingData.cidade;
-            userData.estado = existingData.estado;
-            userData.cep = existingData.cep;
-            userData.complemento = existingData.complemento;
-            userData.cpf = existingData.cpf || ''; // ⭐ NOVO CAMPO CPF
+    // 🆕 FUNÇÃO ATUALIZADA COM FIRESTORE
+    async handleGoogleLoginSuccess(user) {
+        try {
+            // Salvar dados básicos do usuário LOCALMENTE
+            const userData = {
+                nome: user.displayName || user.email.split('@')[0],
+                email: user.email,
+                picture: user.photoURL || 'https://via.placeholder.com/40'
+            };
+
+            // Verificar se já tem dados completos salvos
+            const existingData = this.getUserData();
+            if (existingData && existingData.telefone && existingData.endereco) {
+                console.log('✅ Dados completos encontrados, mesclando...');
+                userData.telefone = existingData.telefone;
+                userData.endereco = existingData.endereco;
+                userData.cidade = existingData.cidade;
+                userData.estado = existingData.estado;
+                userData.cep = existingData.cep;
+                userData.complemento = existingData.complemento;
+                userData.cpf = existingData.cpf || ''; // ⭐ NOVO CAMPO
+            }
+
+            // ⭐ SALVAR NO FIRESTORE (automático via firebase-customers.js)
+            if (window.firebaseCustomers) {
+                console.log('🔄 Disparando sincronização com Firestore...');
+                // O firebase-customers.js já cuida disso automaticamente
+            }
+
+            this.saveUserData(userData);
+            this.updateUI(user);
+
+            // Fechar modal de login
+            const loginModal = document.getElementById('login-modal');
+            if (loginModal) {
+                loginModal.style.display = 'none';
+            }
+
+            // Continuar com o fluxo do pedido
+            this.continueCheckoutFlow();
+
+        } catch (error) {
+            console.error('❌ Erro ao processar login:', error);
         }
-
-        // ⭐ SALVAR NO FIRESTORE (NOVO)
-        if (window.firebaseCustomers) {
-            setTimeout(async () => {
-                try {
-                    const syncResult = await window.firebaseCustomers.syncCustomerData();
-                    if (syncResult.success) {
-                        console.log('✅ Cliente sincronizado com Firestore após login');
-                    } else {
-                        console.log('ℹ️ Aguardando dados completos para sincronizar com Firestore');
-                    }
-                } catch (syncError) {
-                    console.error('❌ Erro na sincronização pós-login:', syncError);
-                }
-            }, 1000);
-        }
-
-        this.saveUserData(userData);
-        this.updateUI(user);
-
-        // Fechar modal de login
-        const loginModal = document.getElementById('login-modal');
-        if (loginModal) {
-            loginModal.style.display = 'none';
-        }
-
-        // Continuar com o fluxo do pedido
-        this.continueCheckoutFlow();
-
-    } catch (error) {
-        console.error('❌ Erro ao processar login:', error);
     }
-}
+
+    continueCheckoutFlow() {
+        console.log('🔄 Continuando fluxo do checkout após login...');
+        
         // Disparar evento para continuar o checkout
         setTimeout(() => {
             if (window.cartManager) {
@@ -203,6 +198,13 @@ async handleGoogleLoginSuccess(user) {
         console.log('✅ Usuário logado:', user.email);
         this.user = user;
         this.updateUI(user);
+
+        // 🆕 Preencher formulário com dados existentes
+        if (window.firebaseCustomers) {
+            setTimeout(() => {
+                window.firebaseCustomers.fillFormWithExistingData();
+            }, 1000);
+        }
     }
 
     handleUserLoggedOut() {
