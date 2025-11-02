@@ -135,49 +135,62 @@ class AuthService {
             this.showLoginError('Erro ao fazer login com Google: ' + error.message);
         }
     }
+// Adicionar esta função à classe AuthService
+async handleGoogleLoginSuccess(user) {
+    try {
+        // Salvar dados básicos do usuário
+        const userData = {
+            nome: user.displayName || user.email.split('@')[0],
+            email: user.email,
+            picture: user.photoURL || 'https://via.placeholder.com/40'
+        };
 
-    async handleGoogleLoginSuccess(user) {
-        try {
-            // Salvar dados básicos do usuário
-            const userData = {
-                nome: user.displayName || user.email.split('@')[0],
-                email: user.email,
-                picture: user.photoURL || 'https://via.placeholder.com/40'
-            };
-
-            // Verificar se já tem dados completos salvos
-            const existingData = this.getUserData();
-            if (existingData && existingData.telefone && existingData.endereco) {
-                console.log('✅ Dados completos encontrados, mesclando...');
-                // Manter dados de endereço existentes
-                userData.telefone = existingData.telefone;
-                userData.endereco = existingData.endereco;
-                userData.cidade = existingData.cidade;
-                userData.estado = existingData.estado;
-                userData.cep = existingData.cep;
-                userData.complemento = existingData.complemento;
-            }
-
-            this.saveUserData(userData);
-            this.updateUI(user);
-
-            // Fechar modal de login
-            const loginModal = document.getElementById('login-modal');
-            if (loginModal) {
-                loginModal.style.display = 'none';
-            }
-
-            // Continuar com o fluxo do pedido
-            this.continueCheckoutFlow();
-
-        } catch (error) {
-            console.error('❌ Erro ao processar login:', error);
+        // Verificar se já tem dados completos salvos
+        const existingData = this.getUserData();
+        if (existingData && existingData.telefone && existingData.endereco) {
+            console.log('✅ Dados completos encontrados, mesclando...');
+            // Manter dados de endereço existentes
+            userData.telefone = existingData.telefone;
+            userData.endereco = existingData.endereco;
+            userData.cidade = existingData.cidade;
+            userData.estado = existingData.estado;
+            userData.cep = existingData.cep;
+            userData.complemento = existingData.complemento;
+            userData.cpf = existingData.cpf || ''; // ⭐ NOVO CAMPO CPF
         }
-    }
 
-    continueCheckoutFlow() {
-        console.log('🔄 Continuando fluxo do checkout após login...');
-        
+        // ⭐ SALVAR NO FIRESTORE (NOVO)
+        if (window.firebaseCustomers) {
+            setTimeout(async () => {
+                try {
+                    const syncResult = await window.firebaseCustomers.syncCustomerData();
+                    if (syncResult.success) {
+                        console.log('✅ Cliente sincronizado com Firestore após login');
+                    } else {
+                        console.log('ℹ️ Aguardando dados completos para sincronizar com Firestore');
+                    }
+                } catch (syncError) {
+                    console.error('❌ Erro na sincronização pós-login:', syncError);
+                }
+            }, 1000);
+        }
+
+        this.saveUserData(userData);
+        this.updateUI(user);
+
+        // Fechar modal de login
+        const loginModal = document.getElementById('login-modal');
+        if (loginModal) {
+            loginModal.style.display = 'none';
+        }
+
+        // Continuar com o fluxo do pedido
+        this.continueCheckoutFlow();
+
+    } catch (error) {
+        console.error('❌ Erro ao processar login:', error);
+    }
+}
         // Disparar evento para continuar o checkout
         setTimeout(() => {
             if (window.cartManager) {
