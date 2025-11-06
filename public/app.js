@@ -4,7 +4,7 @@ class App {
         this.config = {
             whatsappNumber: '5567998668032',
             // ⭐ URL ATUALIZADA PARA RENDER ⭐
-            backendUrl: 'https://garagem67-backend.onrender.com/api/external/orders',
+            backendUrl: 'https://garagem67.onrender.com',
             whatsappMessage: {
                 prefix: '*🛵 NOVO PEDIDO - GARAGEM 67*',
                 suffix: '*📱 Via: Site Garagem 67*'
