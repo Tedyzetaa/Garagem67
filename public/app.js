@@ -1,8 +1,10 @@
-// app.js - Inicialização geral da aplicação com configurações globais
+// app.js - Inicialização geral da aplicação com configurações globais ATUALIZADA
 class App {
     constructor() {
         this.config = {
-            whatsappNumber: '5567998668032', // ⭐ NÚMERO DO WHATSAPP - ALTERE AQUI ⭐
+            whatsappNumber: '5567998668032',
+            // ⭐ URL ATUALIZADA PARA RENDER ⭐
+            backendUrl: 'https://garagem67-backend.onrender.com/api/external/orders',
             whatsappMessage: {
                 prefix: '*🛵 NOVO PEDIDO - GARAGEM 67*',
                 suffix: '*📱 Via: Site Garagem 67*'
@@ -22,6 +24,7 @@ class App {
     init() {
         console.log('🚀 Inicializando Garagem 67...');
         console.log('📞 WhatsApp Configurado:', this.config.whatsappNumber);
+        console.log('🔗 Backend Render:', this.config.backendUrl);
         
         // Tornar config global
         window.appConfig = this.config;
